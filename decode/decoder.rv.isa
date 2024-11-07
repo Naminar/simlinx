@@ -1,7 +1,7 @@
-decode(0-1):
+decode(0-1) {
     b00: decode(13-15) {
-        b011: C_LS
-        b011: C_SD
+        b011: C_LD
+        b111: C_SD
     }
     b01: decode(13-15) {
         b001: C_ADDIW
@@ -194,7 +194,7 @@ decode(0-1):
                 b000010: SLLI_UW
                 b000000: SLLIW
             }
-            b101: deocde(25-31) {
+            b101: decode(25-31) {
                 b0110000: RORIW
                 b0000000: SRLIW
                 b0100000: SRAIW
@@ -237,3 +237,4 @@ decode(0-1):
             b111: REMUW
         }
     }
+}
