@@ -1,0 +1,10 @@
+decode(quad_op):
+    b00: decode(c_op):
+        b011: C_LS({{decode}}, {{execute}});
+        b011: C_SD({{decode}}, {{execute}});
+    b01: decode(c_op):
+        b001: C_ADDIW({{}}, {{}});
+        decode()
+
+
+
