@@ -12,66 +12,87 @@ class Generator:
             self.data.update(json.load(open(file, 'r', encoding="utf-8")))
 
 
-    def get_token(self)->str:
+    def get_token(self, who:str='noone')->str:
         token = self.txt[self.pointer] if self.pointer < len(self.txt) else None
         self.pointer += 1
+        print(f'{who}:{token}')
         return token
 
     def return_token(self)->None:
         if self.pointer > 0:
             self.pointer -= 1
 
-    def ID(self)->None:
-        instr = self.get_token()
-        # if instr.lower() in self.data:
-        self.out += ' '*self.gap + instr + '\n'
+    def ID(self)->str|None:
+        instr = self.get_token('id')
+        if instr.lower() in self.data:
+            return (' '*(self.gap+self.tab) + instr + '\n')
+        else:
+            return None
+
     
     def decode(self)->None:        
-        token = self.get_token()
+        token = self.get_token('decode')
         if token[:7] == 'decode(' and token[-1] == ')':
-            if self.get_token() == '{':
+            if self.get_token('decode') == '{':
                 token = token[7:-1]
-                token.split('-')
+                token =token.split('-')
 
                 mask = None
                 if isinstance(token, list):
-                    num = int(token[1]) - int(token[0]) + 1
-                    mask = '1'*num + '0'*int(token[0])
-                elif isinstance(token, int):
-                    mask = '1' + '0'*token
+                    if len(token) > 1:
+                        num = int(token[1]) - int(token[0]) + 1
+                        # mask = '1'*num + '0'*int(token[0])
+                        mask = '1'*num + f'<<{int(token[0])}'
+                    else:
+                        # mask = '1' + '0'*int(token[0])
+                        mask = '1' + f'<<{int(token[0])}'
 
                 switch_arg = f'bits & 0b{mask}U'
-                self.out += ' '*self.gap + f'switch({switch_arg}) {{\n'
+                out_line = ' '*self.gap + f'switch({switch_arg}) {{\n'
 
                 self.gap += self.tab
-                self.case()
-                self.gap -= self.tab
-
-                if self.get_token() == '}':
-                    self.out += ' '*self.gap + f'}}\n'
-                return True
+                case = self.case()
+                
+                token = self.get_token('decode')
+                if token == '}':
+                    self.gap -= self.tab
+                    if case:
+                        out_line += case
+                        out_line += ' '*self.gap + f'}}\n'
+                    else:
+                        out_line = ''
+                return (True, out_line)
             else:
                 raise ValueError
         else:
             self.return_token()
+            return None, ''
 
 
     def case(self)->None:
+        out_line = ''
         while True:
-            token = self.get_token()
+            token = self.get_token('case')
             if token[-1] == ':':
                 token = token[:-1]
-                self.out += ' '*self.gap + f'case {token}: {{\n'
-
                 self.gap += self.tab
-                if not self.decode():
-                    self.ID()
+                decode = self.decode()
                 self.gap -= self.tab
-                
-                self.out += ' '*(self.gap+self.tab) + f'break;\n' + ' '*self.gap + '}\n'
+                if not decode[0]:
+                    id = self.ID()
+                    if id:
+                        out_line += ' '*self.gap + f'case {token}: {{\n'\
+                                    + id\
+                                    + ' '*(self.gap+self.tab) + f'break;\n' + ' '*self.gap + '}\n'
+                else:
+                    if decode[1]:
+                        out_line += ' '*self.gap + f'case {token}: {{\n'\
+                                    + decode[1]\
+                                    + ' '*(self.gap+self.tab) + f'break;\n' + ' '*self.gap + '}\n'
             else:
                 self.return_token()
                 break
+        return out_line
     
     def close(self)->None:
         pass
@@ -88,7 +109,7 @@ class Generator:
 
     def start(self)->None:
         # print(self.txt)
-        self.decode()
+        _, self.out = self.decode()
         self.dump()
 
 
