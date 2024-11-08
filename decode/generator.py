@@ -7,9 +7,10 @@ class Generator:
 
     def __init__(self, text: list, json_describtion: list):
         self.txt = text
-        self.data = dict()
+        self.isa = dict()
+        self.enum = []
         for file in json_describtion:
-            self.data.update(json.load(open(file, 'r', encoding="utf-8")))
+            self.isa.update(json.load(open(file, 'r', encoding="utf-8")))
 
 
     def get_token(self, who:str='noone')->str:
@@ -24,7 +25,8 @@ class Generator:
 
     def ID(self)->str|None:
         instr = self.get_token('id')
-        if instr.lower() in self.data:
+        if instr.lower() in self.isa:
+            self.enum.append(f'{instr}')
             return (' '*(self.gap+self.tab) + instr + '\n')
         else:
             return None
@@ -104,11 +106,16 @@ class Generator:
         pass
 
     def dump(self)->None:
-        with open('dump.txt', 'w', encoding='utf-8') as f:
+        with open('decode_tree_auto.cc', 'w', encoding='utf-8') as f:
             f.write(self.out)
+        with open('enum_auto.cc', 'w', encoding='utf-8') as f: 
+            enum_str = 'enum Instr {\n'
+            for _ in self.enum:
+                enum_str += f'  {_},\n'
+            enum_str = enum_str[:-2] + '\n};\n'
+            f.write(enum_str)
 
     def start(self)->None:
-        # print(self.txt)
         _, self.out = self.decode()
         self.dump()
 
