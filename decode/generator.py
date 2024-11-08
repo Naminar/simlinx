@@ -1,12 +1,16 @@
-
+import json
 class Generator:
     gap=0
     out=''
     pointer=0
     tab=4
 
-    def __init__(self, text: list):
+    def __init__(self, text: list, json_describtion: list):
         self.txt = text
+        self.data = dict()
+        for file in json_describtion:
+            self.data.update(json.load(open(file, 'r', encoding="utf-8")))
+
 
     def get_token(self)->str:
         token = self.txt[self.pointer] if self.pointer < len(self.txt) else None
@@ -18,7 +22,9 @@ class Generator:
             self.pointer -= 1
 
     def ID(self)->None:
-        self.out += ' '*self.gap + self.get_token() + '\n'
+        instr = self.get_token()
+        # if instr.lower() in self.data:
+        self.out += ' '*self.gap + instr + '\n'
     
     def decode(self)->None:        
         token = self.get_token()
@@ -93,6 +99,6 @@ if __name__ == '__main__':
             line = line.split()
             if line:
                 text  = text + line
-    gen = Generator(text)
+    gen = Generator(text, json_describtion=['instr_dict_rv_i.json'])
     gen.start()
 
