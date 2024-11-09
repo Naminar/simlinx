@@ -1,0 +1,47 @@
+{
+  "lui": {
+    "decode": "
+        
+    ",
+    "execute": "
+
+    "
+  },
+
+  "auipc": {},
+  "jal": {},
+  "jalr": {},
+  "beq": {},
+  "bne": {},
+  "blt": {},
+  "bge": {},
+  "bltu": {},
+  "bgeu": {},
+  "lb": {},
+  "lh": {},
+  "lw": {},
+  "lbu": {},
+  "lhu": {},
+  "sb": {},
+  "sh": {},
+  "sw": {},
+  "addi": {},
+  "slti": {},
+  "sltiu": {},
+  "xori": {},
+  "ori": {},
+  "andi": {},
+  "add": {},
+  "sub": {},
+  "sll": {},
+  "slt": {},
+  "sltu": {},
+  "xor": {},
+  "srl": {},
+  "sra": {},
+  "or": {},
+  "and": {},
+  "fence": {},
+  "ecall": {},
+  "ebreak": {}
+}

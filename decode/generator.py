@@ -1,4 +1,10 @@
 import json
+import csv
+
+decoder_tree_header = """
+void Core::decode(uint64_t decodedBits, BasedInstruction& decodedInstr) {
+"""
+
 class Generator:
     gap=0
     out=''
@@ -27,7 +33,8 @@ class Generator:
         instr = self.get_token('id')
         if instr.lower() in self.isa:
             self.enum.append(f'{instr}')
-            return (' '*(self.gap+self.tab) + instr + '\n')
+            # return (' '*(self.gap+self.tab) + instr + '\n')
+            return (' '*(self.gap+self.tab) + f'decodedInstr.matchBitsId(decodedBits, InstrId::{instr});' +'\n')
         else:
             return None
 
@@ -44,12 +51,12 @@ class Generator:
                     if len(token) > 1:
                         num = int(token[1]) - int(token[0]) + 1
                         # mask = '1'*num + '0'*int(token[0])
-                        mask = '1'*num + f'<<{int(token[0])}'
+                        mask = '1'*num + f'U << {int(token[0])}'
                     else:
                         # mask = '1' + '0'*int(token[0])
-                        mask = '1' + f'<<{int(token[0])}'
+                        mask = '1' + f'U << {int(token[0])}'
 
-                switch_arg = f'bits & 0b{mask}U'
+                switch_arg = f'decodedBits & (0b{mask})'
                 out_line = ' '*self.gap + f'switch({switch_arg}) {{\n'
 
                 self.gap += self.tab
@@ -60,6 +67,7 @@ class Generator:
                     self.gap -= self.tab
                     if case:
                         out_line += case
+                        out_line += ' '*(self.gap+self.tab) + 'default: {break;}\n'
                         out_line += ' '*self.gap + f'}}\n'
                     else:
                         out_line = ''
@@ -83,50 +91,55 @@ class Generator:
                 if not decode[0]:
                     id = self.ID()
                     if id:
-                        out_line += ' '*self.gap + f'case {token}: {{\n'\
+                        out_line += ' '*self.gap + f'case 0{token}: {{\n'\
                                     + id\
                                     + ' '*(self.gap+self.tab) + f'break;\n' + ' '*self.gap + '}\n'
                 else:
                     if decode[1]:
-                        out_line += ' '*self.gap + f'case {token}: {{\n'\
+                        out_line += ' '*self.gap + f'case 0{token}: {{\n'\
                                     + decode[1]\
                                     + ' '*(self.gap+self.tab) + f'break;\n' + ' '*self.gap + '}\n'
             else:
                 self.return_token()
                 break
         return out_line
-    
-    def close(self)->None:
-        pass
 
-    def shift_gap(self, sym: str)->None:
-        pass
-
-    def place_i(self, instr: str)->None:
-        pass
-
-    def dump(self)->None:
+    def make_decode_tree(self)->None:
         with open('decode_tree_auto.cc', 'w', encoding='utf-8') as f:
-            f.write(self.out)
-        with open('enum_auto.cc', 'w', encoding='utf-8') as f: 
-            enum_str = 'enum Instr {\n'
+            f.write(decoder_tree_header + self.out + '}\n')
+
+    def make_enum(self)->None:
+        with open('enum_auto.hh', 'w', encoding='utf-8') as f: 
+            enum_str = 'enum InstrId {\n'
+            enum_str += f'  NONE,\n'
             for _ in self.enum:
                 enum_str += f'  {_},\n'
             enum_str = enum_str[:-2] + '\n};\n'
             f.write(enum_str)
+    
+    def make_bitfields(self)->None:
+        with open('bitfields_auto.cc', 'w', encoding='utf-8') as w_file:
+            with open('arg_lut.csv', 'r') as r_file:
+                reader = csv.reader(r_file)
+                for row in reader:
+                    w_file.write(f'#define {row[0].upper()} \t bitsFrom(decodedInstr, {row[1]}, {row[2]})\n')
+                
 
     def start(self)->None:
         _, self.out = self.decode()
-        self.dump()
+        self.make_decode_tree()
+        self.make_enum()
+        self.make_bitfields()
 
 
 if __name__ == '__main__':
     text = []
-    with open('decoder.rv.isa', 'r', encoding="utf-8") as f:
+    with open('decoderTree.isa', 'r', encoding="utf-8") as f:
         for line in f:
             line = line.split()
             if line:
                 text  = text + line
     gen = Generator(text, json_describtion=['instr_dict_rv_i.json'])
+    gen.gap = gen.tab
     gen.start()
 
