@@ -3,5 +3,5 @@
 #include <cstdint>
 
 namespace ISA {
-class BasedInstruction;
+  class BasedInstruction;
 } // end namespace ISA
