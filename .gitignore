@@ -1,1 +1,6 @@
 decode/*_auto.cc
+# Visual Studio Code configs
+.vscode
+
+# Build dirs
+**/build
