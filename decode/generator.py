@@ -5,6 +5,10 @@ decoder_tree_header = """
 void Core::decode(uint64_t decodedBits, BasedInstruction& decodedInstr) {
 """
 
+execute_cc = """
+Fault execute{{}}(Core& core, ISA::BasedInstruction& instr) {
+"""
+
 class Generator:
     gap=0
     out=''
@@ -17,6 +21,10 @@ class Generator:
         self.enum = []
         for file in json_describtion:
             self.isa.update(json.load(open(file, 'r', encoding="utf-8")))
+        
+        with open('ExecDecode.isa', 'r', encoding='utf-8') as f:
+            self.decodeExec = f.read().replace('\n', '')
+            self.decodeExec = json.loads(self.decodeExec)
 
 
     def get_token(self, who:str='noone')->str:
@@ -34,7 +42,9 @@ class Generator:
         if instr.lower() in self.isa:
             self.enum.append(f'{instr}')
             # return (' '*(self.gap+self.tab) + instr + '\n')
-            return (' '*(self.gap+self.tab) + f'decodedInstr.matchBitsId(decodedBits, InstrId::{instr});' +'\n')
+            put = self.decodeExec[instr.lower()]['decode'] if 'decode' in self.decodeExec[instr.lower()] else ''
+            return (' '*(self.gap+self.tab) + f'decodedInstr.matchBitsId(decodedBits, InstrId::{instr});'
+                     + f'\n{put}\n')
         else:
             return None
 
@@ -118,18 +128,31 @@ class Generator:
             f.write(enum_str)
     
     def make_bitfields(self)->None:
-        with open('bitfields_auto.cc', 'w', encoding='utf-8') as w_file:
+        with open('bitfields_auto.hh', 'w', encoding='utf-8') as w_file:
             with open('arg_lut.csv', 'r') as r_file:
                 reader = csv.reader(r_file)
                 for row in reader:
-                    w_file.write(f'#define {row[0].upper()} \t bitsFrom(decodedInstr, {row[1]}, {row[2]})\n')
-                
+                    w_file.write(f'#define {row[0].upper()} \t bitsFrom(decodedBits, {row[1]}, {row[2]})\n')
+
+
+    def make_execute(self)->None:
+        with open('execute_auto.cc', 'w', encoding='utf-8') as f:
+            for instr in self.enum:
+                put = self.decodeExec[instr.lower()]['execute'] if 'execute' in self.decodeExec[instr.lower()] else ''
+                if put:
+                    put += '\n  return Fault::NoFault'
+                else:
+                    put = '  return Fault::NOT_IMPLEMENTED'
+                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:]) 
+                        + f'\n{put};\n}};\n'
+                        )
 
     def start(self)->None:
         _, self.out = self.decode()
         self.make_decode_tree()
         self.make_enum()
         self.make_bitfields()
+        self.make_execute()
 
 
 if __name__ == '__main__':

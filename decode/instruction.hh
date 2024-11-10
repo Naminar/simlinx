@@ -9,11 +9,16 @@
 
 namespace ISA {
 
+int64_t 
+asSigned(uint64_t val) {
+    return static_cast<int64_t>(val);
+}
+
 template <int N>
 constexpr uint64_t
 sext(uint64_t val)
 {
-    bool sign_bit = bitsFrom(val, N - 1);
+    bool sign_bit = bitsFrom(val, N - 1, N - 1);
     if (sign_bit)
         val |= ~mask(N);
     return val;
@@ -48,6 +53,8 @@ class BasedInstruction {
     uint64_t rs3 = 0;
     uint64_t csr = 0;
     uint64_t imm = 0;
+    uint64_t op1 = 0;
+    uint64_t op2 = 0;
 
     void reset() {
         instrBits = 0;

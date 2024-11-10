@@ -1,15 +1,35 @@
 {
   "lui": {
     "decode": "
-        
+      decodedInstr.imm = IMM20;
+      decodedInstr.rd = RD;
     ",
     "execute": "
-
+      core.regs[instr.rd] = sext<20>(instr.imm) << 12;
     "
   },
-
-  "auipc": {},
-  "jal": {},
+  "auipc": {
+    "decode": "
+      decodedInstr.imm = IMM20;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.pc_reg + sext<20>(instr.imm) << 12;
+    "
+  },
+  "jal": {
+    "decode": "
+    decodedInstr.rd = RD;
+    decodedInstr.imm = bitsFrom(decodedBits,  31,  31) << 20
+                          | bitsFrom(decodedBits, 19, 12)
+                          | bitsFrom(decodedBits, 20, 20) << 11
+                          | bitsFrom(decodedBits, 30, 21) << 1;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.pc_reg + 4;
+    core.pc_reg += sext<21>(instr.imm);
+    "
+  },
   "jalr": {},
   "beq": {},
   "bne": {},
@@ -25,22 +45,166 @@
   "sb": {},
   "sh": {},
   "sw": {},
-  "addi": {},
-  "slti": {},
-  "sltiu": {},
-  "xori": {},
-  "ori": {},
-  "andi": {},
-  "add": {},
-  "sub": {},
-  "sll": {},
-  "slt": {},
-  "sltu": {},
-  "xor": {},
-  "srl": {},
-  "sra": {},
-  "or": {},
-  "and": {},
+  "addi": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] + sext<12>(instr.imm);
+    "
+  },
+  "slti": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) < asSigned(sext<12>(instr.imm));
+    "
+  },
+  "sltiu": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] < sext<12>(instr.imm);
+    "
+  },
+  "xori": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] xor sext<12>(instr.imm);
+    "
+  },
+  "ori": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] or sext<12>(instr.imm);
+    "
+  },
+  "andi": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] and sext<12>(instr.imm);
+    "
+  },
+  "add": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] + core.regs[instr.rs2];
+    "
+  },
+  "sub": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] - core.regs[instr.rs2];
+    "
+  },
+  "sll": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] << core.regs[instr.rs2];
+    "
+  },
+  "slt": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) < asSigned(core.regs[instr.rs2]);
+    "
+  },
+  "sltu": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] < core.regs[instr.rs2];
+    "
+  },
+  "xor": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] xor core.regs[instr.rs2];
+    "
+  },
+  "srl": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] >> core.regs[instr.rs2];
+    "
+  },
+  "sra": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) >> core.regs[instr.rs2];
+    "
+  },
+  "or": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] or core.regs[instr.rs2];
+    "
+  },
+  "and": {
+    "decode": "
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.regs[instr.rs1] and core.regs[instr.rs2];
+    "
+  },
   "fence": {},
   "ecall": {},
   "ebreak": {}
