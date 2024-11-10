@@ -4,3 +4,4 @@ decode/*_auto.cc
 
 # Build dirs
 **/build
+**/*.gen.*
