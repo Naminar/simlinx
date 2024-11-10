@@ -1,5 +1,4 @@
 #include "cpu/cpu.hpp"
-#include "elf-parser/parser.hpp"
 #include <LIEF/ELF.hpp>
 #include <exception>
 #include <print>
