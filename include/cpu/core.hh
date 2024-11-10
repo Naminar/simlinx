@@ -1,5 +1,5 @@
 #pragma once
-#include "instruction/instruction.hpp"
+#include "cpu/instruction.hh"
 #include <array>
 #include <cstdint>
 
