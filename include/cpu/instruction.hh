@@ -13,16 +13,6 @@ asSigned(uint64_t val) {
     return static_cast<int64_t>(val);
 }
 
-template <int N>
-constexpr uint64_t
-sext(uint64_t val)
-{
-    bool sign_bit = bitsFrom(val, N - 1, N - 1);
-    if (sign_bit)
-        val |= ~mask(N);
-    return val;
-}
-
 constexpr uint64_t
 mask(unsigned nbits)
 {
@@ -36,6 +26,16 @@ bitsFrom(T val, unsigned ms_bit, unsigned ls_bit)
     assert(ms_bit >= ls_bit);
     int nbits = ms_bit - ls_bit + 1;
     return (val >> ls_bit) & mask(nbits);
+}
+
+template <int N>
+constexpr uint64_t
+sext(uint64_t val)
+{
+    bool sign_bit = bitsFrom(val, N - 1, N - 1);
+    if (sign_bit)
+        val |= ~mask(N);
+    return val;
 }
 
 class BasedInstruction {

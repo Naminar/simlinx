@@ -9,8 +9,8 @@ namespace simlinx {
   public:
     RAM m_ram;
   
-  protected:
-    Core m_core(m_ram);
+  private:
+    Core m_core{m_ram};
 
   public:
     CPU(RAM::size_type ram_size) : m_ram(ram_size) {}
