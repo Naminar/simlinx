@@ -1,11 +1,11 @@
-#include "cpu/cpu.hpp"
+#include "cpu/cpu.hh"
 #include <LIEF/ELF.hpp>
 #include <exception>
-#include <print>
+#include <iostream>
 
 int main(int argc, char const *argv[]) try {
   if (argc != 2) {
-    std::println("Usage: {} <riscv elf file>", argv[0]);
+    std::cout << "Usage: " << argv[0] << " <riscv elf file>" << std::endl;
     return 0;
   }
 
@@ -20,5 +20,5 @@ int main(int argc, char const *argv[]) try {
 }
 
 catch (std::exception exc) {
-  std::print("{}", exc.what());
+  std::cout << exc.what() << std::endl;
 }

@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS "-g -fsanitize=address,undefined")
 find_package(LIEF REQUIRED COMPONENTS STATIC) # COMPONENTS: <SHARED | STATIC> - Default: STATIC
 
 set(INCLUDE_DIRECTORIES ../../include/)
-set(SOURCES main.cpp)
+set(SOURCES main.cc)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE LIEF::LIEF)
