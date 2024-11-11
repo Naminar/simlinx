@@ -8,7 +8,7 @@ namespace simlinx {
 
   public:
     RAM m_ram;
-  
+
   private:
     Core m_core{m_ram};
 

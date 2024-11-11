@@ -12,10 +12,10 @@ namespace simlinx {
   public:
     std::array<reg_t, 32> regs;
     reg_t pc_reg = 0U;
-    RAM& mem;
+    RAM &mem;
 
   public:
     void decode(uint64_t decodedBits, ISA::BasedInstruction &decodedInstr);
-    Core(RAM& ram): mem(ram) {};
+    Core(RAM &ram) : mem(ram){};
   };
 } // namespace simlinx
