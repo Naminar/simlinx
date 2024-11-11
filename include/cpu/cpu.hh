@@ -1,6 +1,6 @@
 #pragma once
-#include "cpu/core.hpp"
-#include "ram/ram.hpp"
+#include "cpu/core.hh"
+#include "ram/ram.hh"
 #include "utils/warning.h"
 
 namespace simlinx {

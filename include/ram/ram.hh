@@ -3,31 +3,14 @@
 #include <cstdint>
 #include <span>
 #include <vector>
+#include <concepts>
 
 namespace simlinx {
 
-  class Qword {
-    uint8_t *world1;
-    uint8_t *world2;
-    uint8_t *world3;
-    uint8_t *world4;
-
-  public:
-    Qword(uint8_t *w1, uint8_t *w2, uint8_t *w3, uint8_t *w4)
-        : world1{w1}, world2{w2}, world3{w3}, world4{w4} {}
-
-    Qword &operator=(uint64_t qworld) {
-      *world1 = 0xFF & (qworld);
-      *world2 = 0xFF & (qworld >> 8);
-      *world3 = 0xFF & (qworld >> 16);
-      *world4 = 0xFF & (qworld >> 24);
-      return *this;
-    }
-
-    operator uint64_t() {
-      return *world1 << 0 | *world2 << 8 | *world3 << 16 | *world4 << 24;
-    }
-  };
+  using byte  = uint8_t;
+  using word  = uint16_t;
+  using dword = uint32_t;
+  using qword = uint64_t;
 
   class RAM final {
     std::vector<uint8_t> raw_ram;
@@ -36,28 +19,35 @@ namespace simlinx {
     using size_type = unsigned long long;
 
   public:
-    RAM(size_type ram_size) : raw_ram(ram_size) {}
+    constexpr RAM(size_type ram_size) : raw_ram(ram_size) {}
 
-    std::span<uint8_t> allocate_memory(size_type allocate_size) {
+    constexpr std::span<uint8_t> allocate_memory(size_type allocate_size) {
       BAD_IMPLEMENTED("");
       return std::span<uint8_t>(raw_ram).subspan(0, allocate_size);
     }
 
-    uint64_t operator[](size_type index) const {
-      return raw_ram[index] << 0 | raw_ram[index + 1] << 8 |
-             raw_ram[index + 2] << 16 | raw_ram[index + 3] << 24;
+    template <std::unsigned_integral T>
+    constexpr T load(size_type addr) {
+      T result {};
+      for (auto i = 0uz; i < sizeof(T); ++i) {
+        result |= raw_ram[addr + i] << 8 * i;
+      }
+      return result;
     }
 
-    Qword operator[](size_type index) {
-      return Qword{&raw_ram[index], &raw_ram[index + 1], &raw_ram[index + 2],
-                   &raw_ram[index + 3]};
+    constexpr void store(size_type addr, std::unsigned_integral auto value) {
+      for (auto i = 0uz; i < sizeof(value); ++i) {
+       raw_ram[addr + i] = 0xFF & value;
+       value >>= 8;
+      }
     }
 
-    void store64(size_type address, uint64_t value) {
-      raw_ram[address] = 0xFF & (value);
-      raw_ram[address + 1] = 0xFF & (value >> 8);
-      raw_ram[address + 2] = 0xFF & (value >> 16);
-      raw_ram[address + 3] = 0xFF & (value >> 24);
+    constexpr byte& operator[](size_type addr) {
+      return raw_ram[addr];
+    }
+
+    constexpr byte operator[](size_type addr) const {
+      return const_cast<const RAM*>(this)->operator[](addr);
     }
   };
 } // namespace simlinx

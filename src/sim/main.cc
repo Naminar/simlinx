@@ -1,4 +1,4 @@
-#include "cpu/cpu.hpp"
+#include "cpu/cpu.hh"
 #include <LIEF/ELF.hpp>
 #include <exception>
 #include <print>
