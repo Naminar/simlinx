@@ -4,7 +4,7 @@ import os
 
 decoder_tree_header = """
 using ISA::bitsFrom;
-void simlinx::Core::decode(uint64_t decodedBits, ISA::BasedInstruction& decodedInstr) {
+void simlinx::Core::decode(uint32_t decodedBits, ISA::BasedInstruction& decodedInstr) {
 """
 
 execute_cc = """
