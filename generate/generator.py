@@ -129,10 +129,14 @@ class Generator:
     def make_enum(self)->None:
         with open(self.cpuDirHH+'enum.gen.hh', 'w', encoding='utf-8') as f:
             enum_str = 'enum InstrId {\n'
-            # enum_str += f'  NONE = 0,\n'
+            none_ind = 0
             for ind, name in enumerate(self.enum):
                 enum_str += f'  {name} = {ind},\n'
-            enum_str = enum_str[:-2] + '\n};\n'
+                none_ind = ind
+            none_ind += 1
+            print(none_ind)
+            enum_str += f'  NONE = {none_ind}'
+            enum_str = enum_str + '\n};\n'
             f.write(enum_str)
 
     def make_bitfields(self)->None:
