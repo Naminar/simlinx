@@ -31,6 +31,7 @@ namespace ISA {
   class BasedInstruction {
     uint64_t instrBits;
 
+  public:
     // for array of exec functions
     InstrId instrId;
 
@@ -58,8 +59,6 @@ namespace ISA {
       csr = 0;
       imm = 0;
     }
-    // virtual void execute(){};
-
     void matchBitsId(uint64_t bits, InstrId id) {
       instrBits = bits;
       instrId = id;

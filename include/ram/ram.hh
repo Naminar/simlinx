@@ -29,10 +29,14 @@ namespace simlinx {
     template <std::unsigned_integral T>
     constexpr T load(size_type addr) {
       T result {};
-      for (auto i = 0uz; i < sizeof(T); ++i) {
-        result |= raw_ram[addr + i] << 8 * i;
-      }
+      load(addr, result);
       return result;
+    }
+
+    constexpr void load(size_type addr, std::unsigned_integral auto& value) {
+      for (auto i = 0uz; i < sizeof(value); ++i) {
+        value |= raw_ram[addr + i] << 8 * i;
+      }
     }
 
     constexpr void store(size_type addr, std::unsigned_integral auto value) {
