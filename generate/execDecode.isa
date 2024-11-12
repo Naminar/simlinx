@@ -127,7 +127,7 @@
     ",
     "execute": "
     core.regs[instr.rd] = sext<8>(
-                              bitsFrom(core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)], 7, 0)
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0)
                             );
     "
   },
@@ -139,7 +139,7 @@
     ",
     "execute": "
     core.regs[instr.rd] = sext<16>(
-                              bitsFrom(core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)], 15, 0)
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0)
                             );
     "
   },
@@ -151,7 +151,7 @@
     ",
     "execute": "
     core.regs[instr.rd] = sext<32>(
-                              bitsFrom(core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)], 31, 0)
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 31, 0)
                             );
     "
   },
@@ -162,7 +162,7 @@
     decodedInstr.imm = IMM12;
     ",
     "execute": "
-    core.regs[instr.rd] = bitsFrom(core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)], 7, 0);
+    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0);
     "
   },
   "lhu": {
@@ -172,7 +172,7 @@
     decodedInstr.imm = IMM12;
     ",
     "execute": "
-    core.regs[instr.rd] = bitsFrom(core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)], 15, 0);
+    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0);
     "
   },
   "sb": {
@@ -182,7 +182,7 @@
     decodedInstr.imm = IMM12HI | IMM12LO;
     ",
     "execute": "
-    core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)] = bitsFrom(core.regs[instr.rs2], 7, 0);
+    core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 7, 0));
     "
   },
   "sh": {
@@ -192,7 +192,7 @@
     decodedInstr.imm = IMM12HI | IMM12LO;
     ",
     "execute": "
-    core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)] = bitsFrom(core.regs[instr.rs2], 15, 0);
+    core.mem.store<uint16_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 15, 0));
     "
   },
   "sw": {
@@ -202,7 +202,7 @@
     decodedInstr.imm = IMM12HI | IMM12LO;
     ",
     "execute": "
-    core.mem[core.regs[instr.rs1] + sext<12>(instr.imm)] = bitsFrom(core.regs[instr.rs2], 31, 0);
+    core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
     "
   },
   "addi": {

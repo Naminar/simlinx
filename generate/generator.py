@@ -4,7 +4,7 @@ import os
 
 decoder_tree_header = """
 using ISA::bitsFrom;
-void simlinx::Core::decode(uint64_t decodedBits, ISA::BasedInstruction& decodedInstr) {
+void simlinx::Core::decode(uint32_t decodedBits, ISA::BasedInstruction& decodedInstr) {
 """
 
 execute_cc = """
@@ -129,10 +129,14 @@ class Generator:
     def make_enum(self)->None:
         with open(self.cpuDirHH+'enum.gen.hh', 'w', encoding='utf-8') as f:
             enum_str = 'enum InstrId {\n'
-            enum_str += f'  NONE,\n'
-            for _ in self.enum:
-                enum_str += f'  {_},\n'
-            enum_str = enum_str[:-2] + '\n};\n'
+            none_ind = 0
+            for ind, name in enumerate(self.enum):
+                enum_str += f'  {name} = {ind},\n'
+                none_ind = ind
+            none_ind += 1
+            print(none_ind)
+            enum_str += f'  NONE = {none_ind}'
+            enum_str = enum_str + '\n};\n'
             f.write(enum_str)
 
     def make_bitfields(self)->None:
@@ -143,11 +147,26 @@ class Generator:
                     w_file.write(f'#define {row[0].upper()} \t bitsFrom(decodedBits, {row[1]}, {row[2]})\n')
 
 
+    def make_execute_array_in_header(self)->None:
+        with open('../include/cpu/execute.gen.hh', 'a', encoding='utf-8') as f:
+            f.write('namespace ISA {\n')
+            numFunctions = 0
+            for instr in self.enum:
+                numFunctions += 1
+                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])[:-2] + ';\n')
+            f.write(f'std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {numFunctions}> executeFunctions = {{ \n') #nullptr,\n')
+            for instr in self.enum:
+                f.write('&execute{{}},\n'.replace('{{}}', instr[0]+instr.lower()[1:]))
+            f.write('};\n}\n')
+
+
+
     def make_execute(self)->None:
 
         with open(self.cpuDirCC+'execute.gen.cc', 'w', encoding='utf-8') as f:
             # f.write(f'#include "{self.cpuDir}/execute.gen.hh"\n')
             f.write(self.make_header('execute', 'cpu', cpu=['fault', 'core','instruction']))
+            self.make_execute_array_in_header()
             f.write('\nnamespace ISA {\n')
             for instr in self.enum:
                 put = self.decodeExec[instr.lower()]['execute'] if 'execute' in self.decodeExec[instr.lower()] else ''
