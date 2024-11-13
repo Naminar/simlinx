@@ -1,7 +1,7 @@
-decode/*_auto.cc
 # Visual Studio Code configs
 .vscode
 
-# Build dirs
+# Build dirs and files
 **/build
+**/a.out
 **/*.gen.*

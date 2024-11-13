@@ -8,20 +8,20 @@
 
 namespace ISA {
 
-  int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
 
-  constexpr uint64_t mask(unsigned nbits) {
+  constexpr inline uint64_t mask(unsigned nbits) {
     return (nbits >= 64) ? (uint64_t)-1LL : (1ULL << nbits) - 1;
   }
 
   template <class T>
-  constexpr T bitsFrom(T val, unsigned ms_bit, unsigned ls_bit) {
+  constexpr inline T bitsFrom(T val, unsigned ms_bit, unsigned ls_bit) {
     assert(ms_bit >= ls_bit);
     int nbits = ms_bit - ls_bit + 1;
     return (val >> ls_bit) & mask(nbits);
   }
 
-  template <int N> constexpr uint64_t sext(uint64_t val) {
+  template <int N> constexpr inline uint64_t sext(uint64_t val) {
     bool sign_bit = bitsFrom(val, N - 1, N - 1);
     if (sign_bit)
       val |= ~mask(N);
@@ -29,8 +29,9 @@ namespace ISA {
   }
 
   class BasedInstruction {
+  public:
     uint64_t instrBits;
-
+  
     // for array of exec functions
     InstrId instrId;
 
@@ -58,8 +59,6 @@ namespace ISA {
       csr = 0;
       imm = 0;
     }
-    // virtual void execute(){};
-
     void matchBitsId(uint64_t bits, InstrId id) {
       instrBits = bits;
       instrId = id;
