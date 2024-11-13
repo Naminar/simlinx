@@ -61,7 +61,7 @@ class Generator:
         if token[:7] == 'decode(' and token[-1] == ')':
             if self.get_token('decode') == '{':
                 token = token[7:-1]
-                token =token.split('-')
+                token = token.split('-')
 
                 mask = None
                 if isinstance(token, list):
@@ -73,7 +73,7 @@ class Generator:
                         # mask = '1' + '0'*int(token[0])
                         mask = '1' + f'U << {int(token[0])}'
 
-                switch_arg = f'decodedBits & (0b{mask})'
+                switch_arg = f'(decodedBits & (0b{mask})) >> {int(token[0])}'
                 out_line = ' '*self.gap + f'switch({switch_arg}) {{\n'
 
                 self.gap += self.tab
@@ -154,7 +154,7 @@ class Generator:
             for instr in self.enum:
                 numFunctions += 1
                 f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])[:-2] + ';\n')
-            f.write(f'std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {numFunctions}> executeFunctions = {{ \n') #nullptr,\n')
+            f.write(f'static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {numFunctions}> executeFunctions = {{ \n') #nullptr,\n')
             for instr in self.enum:
                 f.write('&execute{{}},\n'.replace('{{}}', instr[0]+instr.lower()[1:]))
             f.write('};\n}\n')
@@ -220,7 +220,7 @@ if __name__ == '__main__':
             line = line.split()
             if line:
                 text  = text + line
-    gen = Generator(text, json_describtion=['instr_dict_rv_i.json'])
+    gen = Generator(text, json_describtion=['custom.json'])
     gen.gap = gen.tab
     gen.start()
 

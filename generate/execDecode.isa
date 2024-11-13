@@ -21,7 +21,7 @@
     "decode": "
     decodedInstr.rd = RD;
     decodedInstr.imm = bitsFrom(decodedBits,  31,  31) << 20
-                          | bitsFrom(decodedBits, 19, 12)
+                          | bitsFrom(decodedBits, 19, 12) << 12
                           | bitsFrom(decodedBits, 20, 20) << 11
                           | bitsFrom(decodedBits, 30, 21) << 1;
     ",
@@ -203,6 +203,16 @@
     ",
     "execute": "
     core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
+    "
+  },
+  "sd": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = IMM12HI | IMM12LO;
+    ",
+    "execute": "
+    core.mem.store<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 63, 0));
     "
   },
   "addi": {

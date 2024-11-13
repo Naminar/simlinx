@@ -13,6 +13,7 @@ namespace simlinx {
   using qword = uint64_t;
 
   class RAM final {
+  public:
     std::vector<uint8_t> raw_ram;
 
   public:
@@ -21,9 +22,9 @@ namespace simlinx {
   public:
     constexpr RAM(size_type ram_size) : raw_ram(ram_size) {}
 
-    constexpr std::span<uint8_t> allocate_memory(size_type allocate_size) {
+    constexpr std::span<uint8_t> get_memory(size_type allocate_size, size_type offset) {
       BAD_IMPLEMENTED("");
-      return std::span<uint8_t>(raw_ram).subspan(0, allocate_size);
+      return std::span<uint8_t>(raw_ram).subspan(offset, allocate_size);
     }
 
     template <std::unsigned_integral T>
@@ -35,13 +36,13 @@ namespace simlinx {
 
     constexpr void load(size_type addr, std::unsigned_integral auto& value) {
       for (auto i = 0uz; i < sizeof(value); ++i) {
-        value |= raw_ram[addr + i] << 8 * i;
+        value |= raw_ram.at(addr + i) << 8 * i;
       }
     }
 
     constexpr void store(size_type addr, std::unsigned_integral auto value) {
       for (auto i = 0uz; i < sizeof(value); ++i) {
-       raw_ram[addr + i] = 0xFF & value;
+       raw_ram.at(addr + i) = 0xFF & value;
        value >>= 8;
       }
     }

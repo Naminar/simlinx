@@ -15,6 +15,8 @@ namespace simlinx {
   public:
     CPU(RAM::size_type ram_size) : m_ram(ram_size) {}
 
-    void run(Core::reg_t pc) { m_core.run(pc); };
+    void run(Core::reg_t pc) { 
+      m_core.run(pc); 
+    };
   };
 } // namespace simlinx
