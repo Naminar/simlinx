@@ -2,12 +2,13 @@
 #include "cpu/execute.gen.hh"
 #include <iostream>
 #include <print>
+#include <bitset>
 
 namespace simlinx {
     void Core::run(Core::reg_t pc) { 
         pc_reg = pc;
         regs[2] = 900_KB;
-        printf("regs2 %b\n", regs[2]);
+        std::cout << "reg2" <<std::bitset<64>(regs[2]) << std::endl;
         for (auto byte : std::span<uint8_t>(mem.raw_ram).subspan(0, 300)) {
             std::cout << std::hex << byte << " ";
         }
