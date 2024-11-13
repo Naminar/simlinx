@@ -6,5 +6,5 @@
   * [2017](https://riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf)
 
 '''
-riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 —static -Wl,-emain fib.cc
+riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 --static -Wl,-emain fib.cc
 '''
