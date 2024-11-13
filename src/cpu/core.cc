@@ -20,7 +20,9 @@ namespace simlinx {
 #endif
             decode(decodedBits, inst);
             try {
-                ISA::executeFunctions[inst.instrId](*this, inst);
+                auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
+                if (fault != Fault::NO_FAULT)
+                    return;
             } catch  (std::exception& e) {
                 std::println("executeFunctions exception! PC = {}", pc_reg);
                 std::println("{}", e.what());
