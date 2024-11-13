@@ -66,14 +66,16 @@ class Generator:
                 mask = None
                 if isinstance(token, list):
                     if len(token) > 1:
-                        num = int(token[1]) - int(token[0]) + 1
-                        # mask = '1'*num + '0'*int(token[0])
-                        mask = '1'*num + f'U << {int(token[0])}'
+                        switch_arg = f'(bitsFrom(decodedBits, {token[1]}, {token[0]}))'
+                        # num = int(token[1]) - int(token[0]) + 1
+                        # # mask = '1'*num + '0'*int(token[0])
+                        # mask = '1'*num + f'U << {int(token[0])}'
                     else:
-                        # mask = '1' + '0'*int(token[0])
-                        mask = '1' + f'U << {int(token[0])}'
+                        switch_arg = f'(bitsFrom(decodedBits, {token[0]}, {token[0]}))'
+                        # # mask = '1' + '0'*int(token[0])
+                        # mask = '1' + f'U << {int(token[0])}'
 
-                switch_arg = f'(decodedBits & (0b{mask})) >> {int(token[0])}'
+                # switch_arg = f'(decodedBits & (0b{mask})) >> {int(token[0])}'
                 out_line = ' '*self.gap + f'switch({switch_arg}) {{\n'
 
                 self.gap += self.tab
