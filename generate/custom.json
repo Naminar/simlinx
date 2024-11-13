@@ -494,5 +494,18 @@
       ],
       "match": "0x100073",
       "mask": "0xffffffff"
+    },
+    "addiw": {
+      "encoding": "-----------------000-----0011011",
+      "variable_fields": [
+        "rd",
+        "rs1",
+        "imm12"
+      ],
+      "extension": [
+        "rv64_i"
+      ],
+      "match": "0x1b",
+      "mask": "0x707f"
     }
 }

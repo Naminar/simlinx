@@ -377,5 +377,15 @@
   },
   "fence": {},
   "ecall": {},
-  "ebreak": {}
+  "ebreak": {},
+  "addiw": {
+    "decode": "
+      decodedInstr.imm = IMM12;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + sext<12>(instr.imm), 31, 0));
+    "
+  }
 }
