@@ -177,6 +177,7 @@ class Generator:
                 else:
                     put = '  return Fault::NOT_IMPLEMENTED'
                 f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])
+                        + ' std::cout << __PRETTY_FUNCTION__ << std::endl;\n'
                         + f'\n{put};\n}};\n'
                         )
             f.write('}\n')
