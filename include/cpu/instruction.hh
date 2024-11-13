@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include <bitset>
 
 namespace ISA {
 
@@ -63,6 +64,16 @@ namespace ISA {
       instrBits = bits;
       instrId = id;
     }
+  template <bool enBinary = false, bool enHex = false, typename T = uint64_t>
+  void _dump(T param, const std::string& name) {
+    std::cout << name << " = " << param;
+    if (enBinary)
+      std::cout << " | binary = " << std::bitset<sizeof(T)>(param);
+    if (enHex)
+      std::cout << " | hex = " << std::hex << param << std::endl;
+    else
+      std::cout << std::endl;
+  }
   };
 
 } // end namespace ISA
