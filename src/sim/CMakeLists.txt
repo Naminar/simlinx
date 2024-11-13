@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)           # Use C++17, change to 11, 14, 20, etc. as 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Ensure the compiler supports this standard
 set(CMAKE_CXX_EXTENSIONS OFF)        # Use only standard-compliant C++
 
-set(CMAKE_CXX_FLAGS "-g -fsanitize=address,undefined")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -fsanitize=address,undefined")
 
 # Use LIEF with 'find_package()'
 # ==============================

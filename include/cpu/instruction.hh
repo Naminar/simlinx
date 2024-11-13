@@ -31,7 +31,6 @@ namespace ISA {
   class BasedInstruction {
   public:
     uint64_t instrBits;
-
   
     // for array of exec functions
     InstrId instrId;

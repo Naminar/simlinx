@@ -22,7 +22,7 @@ namespace simlinx {
   public:
     constexpr RAM(size_type ram_size) : raw_ram(ram_size) {}
 
-    constexpr std::span<uint8_t> get_memory(size_type allocate_size, size_type offset) {
+    std::span<uint8_t> get_memory(size_type allocate_size, size_type offset) {
       BAD_IMPLEMENTED("");
       return std::span<uint8_t>(raw_ram).subspan(offset, allocate_size);
     }
