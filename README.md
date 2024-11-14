@@ -14,4 +14,5 @@ python3 generator.py
 
 ```
 riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 --static -Wl,-emain riscv-examples/src/fib.cc
+riscv64-linux-gnu-objdump -M no-aliases -M numeric -d
 ```
