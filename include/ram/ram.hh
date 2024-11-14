@@ -36,7 +36,7 @@ namespace simlinx {
 
     constexpr void load(size_type addr, std::unsigned_integral auto& value) {
       for (auto i = 0uz; i < sizeof(value); ++i) {
-        value |= raw_ram.at(addr + i) << 8 * i;
+        value |= static_cast<std::decay_t<decltype(value)>>(raw_ram.at(addr + i)) << 8 * i;
       }
     }
 

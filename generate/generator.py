@@ -86,7 +86,7 @@ class Generator:
                     self.gap -= self.tab
                     if case:
                         out_line += case
-                        out_line += ' '*(self.gap+self.tab) + 'default: {break;}\n'
+                        out_line += ' '*(self.gap+self.tab) + 'default: {decodedInstr.matchBitsId(decodedBits, InstrId::NONE);}\n'
                         out_line += ' '*self.gap + f'}}\n'
                     else:
                         out_line = ''

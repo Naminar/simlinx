@@ -38,7 +38,7 @@
     ",
     "execute": "
     core.regs[instr.rd] = core.pc_reg + 4;
-    core.pc_reg = (core.regs[instr.rs1] + sext<12>(instr.imm)) and not 1U;
+    core.pc_reg = (core.regs[instr.rs1] + sext<12>(instr.imm)) &  ~1U;
     "
   },
   "beq": {
@@ -155,6 +155,16 @@
                             );
     "
   },
+  "ld": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
+    "
+  },
   "lbu": {
     "decode": "
     decodedInstr.rs1 = RS1;
@@ -179,7 +189,7 @@
     "decode": "
     decodedInstr.rs1 = RS1;
     decodedInstr.rs2 = RS2;
-    decodedInstr.imm = IMM12HI | IMM12LO;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
     ",
     "execute": "
     core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 7, 0));
@@ -189,7 +199,7 @@
     "decode": "
     decodedInstr.rs1 = RS1;
     decodedInstr.rs2 = RS2;
-    decodedInstr.imm = IMM12HI | IMM12LO;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
     ",
     "execute": "
     core.mem.store<uint16_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 15, 0));
@@ -199,17 +209,17 @@
     "decode": "
     decodedInstr.rs1 = RS1;
     decodedInstr.rs2 = RS2;
-    decodedInstr.imm = IMM12HI | IMM12LO;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
     ",
     "execute": "
-    core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
+    core.mem.store<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
     "
   },
   "sd": {
     "decode": "
     decodedInstr.rs1 = RS1;
     decodedInstr.rs2 = RS2;
-    decodedInstr.imm = IMM12HI | IMM12LO;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
     ",
     "execute": "
     core.mem.store<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 63, 0));
@@ -252,7 +262,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] xor sext<12>(instr.imm);
+    core.regs[instr.rd] = core.regs[instr.rs1] ^ sext<12>(instr.imm);
     "
   },
   "ori": {
@@ -262,7 +272,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] or sext<12>(instr.imm);
+    core.regs[instr.rd] = core.regs[instr.rs1] | sext<12>(instr.imm);
     "
   },
   "andi": {
@@ -272,7 +282,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] and sext<12>(instr.imm);
+    core.regs[instr.rd] = core.regs[instr.rs1] & sext<12>(instr.imm);
     "
   },
   "add": {
@@ -332,7 +342,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] xor core.regs[instr.rs2];
+    core.regs[instr.rd] = core.regs[instr.rs1] ^ core.regs[instr.rs2];
     "
   },
   "srl": {
@@ -362,7 +372,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] or core.regs[instr.rs2];
+    core.regs[instr.rd] = core.regs[instr.rs1] | core.regs[instr.rs2];
     "
   },
   "and": {
@@ -372,7 +382,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.regs[instr.rs1] and core.regs[instr.rs2];
+    core.regs[instr.rd] = core.regs[instr.rs1] & core.regs[instr.rs2];
     "
   },
   "fence": {},
@@ -386,6 +396,16 @@
     ",
     "execute": "
     core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + sext<12>(instr.imm), 31, 0));
+    "
+  },
+  "addw": {
+    "decode": "
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + core.regs[instr.rs2], 31, 0));
     "
   }
 }
