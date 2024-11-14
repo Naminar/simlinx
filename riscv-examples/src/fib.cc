@@ -3,6 +3,4 @@ int fibonacci_recursive(int n) {
     return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2);
 }
 
-int main() {
-    return fibonacci_recursive(2);
-}
+int main() { return fibonacci_recursive(7); }
