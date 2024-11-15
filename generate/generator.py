@@ -178,7 +178,7 @@ class Generator:
                     put += '\n  return Fault::NO_FAULT'
                 else:
                     put = '  return Fault::NOT_IMPLEMENTED'
-                instr_debug = ' std::cout << __PRETTY_FUNCTION__ << std::endl;\ninstr.dump();' if self.genArgs.debug else ''
+                instr_debug = ' std::cout << __PRETTY_FUNCTION__ << std::endl;\n instr.dump();' if self.genArgs.debug else ''
                 f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])
                         + instr_debug
                         + f'\n{put};\n}};\n'
@@ -223,7 +223,7 @@ class Generator:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-D', '--debug', action='store_false', default=False, help='Enable debug mode.')
+    parser.add_argument('-D', '--debug', action='store_true', default=False, help='Enable debug mode.')
     args = parser.parse_args()
     text = []
     with open('decoderTree.isa', 'r', encoding="utf-8") as f:
