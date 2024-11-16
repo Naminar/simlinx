@@ -1,6 +1,7 @@
 #pragma once
 #include "cpu/enum.gen.hh"
 #include <assert.h>
+#include <bitset>
 #include <cassert>
 #include <cstdint>
 #include <iostream>
@@ -8,7 +9,7 @@
 
 namespace ISA {
 
-  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  inline int64_t asSigned(uint64_t val) { return int64_t(val); }
 
   constexpr inline uint64_t mask(unsigned nbits) {
     return (nbits >= 64) ? (uint64_t)-1LL : (1ULL << nbits) - 1;
@@ -31,7 +32,7 @@ namespace ISA {
   class BasedInstruction {
   public:
     uint64_t instrBits;
-  
+
     // for array of exec functions
     InstrId instrId;
 
@@ -62,6 +63,25 @@ namespace ISA {
     void matchBitsId(uint64_t bits, InstrId id) {
       instrBits = bits;
       instrId = id;
+    }
+    template <bool enBinary = true, bool enHex = true, typename T = uint64_t>
+    void _dump(T param, const std::string &name) {
+      std::cout << name << " = " << std::dec << param;
+      if (enBinary)
+        std::cout << " | binary = " << std::bitset<sizeof(T) * 8>(param);
+      if (enHex)
+        std::cout << " | hex = " << std::hex << param << std::endl;
+      else
+        std::cout << std::endl;
+      std::cout << std::dec;
+    }
+    void dump() {
+      _dump(offset, "offset");
+      _dump(rd, "rd");
+      _dump(rs1, "rs1");
+      _dump(rs2, "rs2");
+      _dump(rs3, "rs3");
+      _dump(imm, "imm");
     }
   };
 

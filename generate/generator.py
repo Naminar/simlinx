@@ -1,3 +1,4 @@
+import argparse
 import json
 import csv
 import os
@@ -22,8 +23,9 @@ class Generator:
     cpuDirCC = f'../src/{cpuDir}/'
     cpuDirHH = f'../include/{cpuDir}/'
 
-    def __init__(self, text: list, json_describtion: list):
+    def __init__(self, text: list, args, json_describtion: list):
         self.txt = text
+        self.genArgs = args
         self.isa = dict()
         self.enum = []
         for file in json_describtion:
@@ -37,7 +39,7 @@ class Generator:
     def get_token(self, who:str='noone')->str:
         token = self.txt[self.pointer] if self.pointer < len(self.txt) else None
         self.pointer += 1
-        print(f'{who}:{token}')
+        # print(f'{who}:{token}')
         return token
 
     def return_token(self)->None:
@@ -86,7 +88,7 @@ class Generator:
                     self.gap -= self.tab
                     if case:
                         out_line += case
-                        out_line += ' '*(self.gap+self.tab) + 'default: {break;}\n'
+                        out_line += ' '*(self.gap+self.tab) + 'default: {decodedInstr.matchBitsId(decodedBits, InstrId::NONE);}\n'
                         out_line += ' '*self.gap + f'}}\n'
                     else:
                         out_line = ''
@@ -136,7 +138,7 @@ class Generator:
                 enum_str += f'  {name} = {ind},\n'
                 none_ind = ind
             none_ind += 1
-            print(none_ind)
+            # print(none_ind)
             enum_str += f'  NONE = {none_ind}'
             enum_str = enum_str + '\n};\n'
             f.write(enum_str)
@@ -176,8 +178,9 @@ class Generator:
                     put += '\n  return Fault::NO_FAULT'
                 else:
                     put = '  return Fault::NOT_IMPLEMENTED'
+                instr_debug = ' std::cout << __PRETTY_FUNCTION__ << std::endl;\n instr.dump();' if self.genArgs.debug else ''
                 f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])
-                        + ' std::cout << __PRETTY_FUNCTION__ << std::endl;\n'
+                        + instr_debug
                         + f'\n{put};\n}};\n'
                         )
             f.write('}\n')
@@ -201,7 +204,7 @@ class Generator:
 
         include_str = '#pragma once\n'
         madeHeader = dirHH+f'/{file_name}.gen.hh'
-        print(args)
+        # print(args)
         for dirInclude in args:
             for fileToInclude in args[dirInclude]:
                 include_str += f'#include "{dirInclude}/{fileToInclude}.hh"\n'
@@ -216,14 +219,18 @@ class Generator:
         self.make_execute()
 
 
+
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-D', '--debug', action='store_true', default=False, help='Enable debug mode.')
+    args = parser.parse_args()
     text = []
     with open('decoderTree.isa', 'r', encoding="utf-8") as f:
         for line in f:
             line = line.split()
             if line:
                 text  = text + line
-    gen = Generator(text, json_describtion=['custom.json'])
+    gen = Generator(text, args, json_describtion=['custom.json'])
     gen.gap = gen.tab
     gen.start()
-
