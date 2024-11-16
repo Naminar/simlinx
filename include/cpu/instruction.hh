@@ -3,13 +3,19 @@
 #include <assert.h>
 #include <bitset>
 #include <cassert>
+#include <concepts>
 #include <cstdint>
 #include <iostream>
 #include <vector>
 
+
 namespace ISA {
 
-  inline int64_t asSigned(uint64_t val) { return int64_t(val); }
+  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  template <std::signed_integral S = int64_t, typename U = uint64_t>
+  inline S asSigned(U val) {
+    return static_cast<S>(val);
+  }
 
   constexpr inline uint64_t mask(unsigned nbits) {
     return (nbits >= 64) ? (uint64_t)-1LL : (1ULL << nbits) - 1;
