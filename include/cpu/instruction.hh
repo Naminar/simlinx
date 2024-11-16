@@ -1,15 +1,15 @@
 #pragma once
 #include "cpu/enum.gen.hh"
 #include <assert.h>
+#include <bitset>
 #include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <vector>
-#include <bitset>
 
 namespace ISA {
 
-  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  inline int64_t asSigned(uint64_t val) { return int64_t(val); }
 
   constexpr inline uint64_t mask(unsigned nbits) {
     return (nbits >= 64) ? (uint64_t)-1LL : (1ULL << nbits) - 1;
@@ -32,7 +32,7 @@ namespace ISA {
   class BasedInstruction {
   public:
     uint64_t instrBits;
-  
+
     // for array of exec functions
     InstrId instrId;
 
