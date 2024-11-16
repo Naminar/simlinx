@@ -14,7 +14,7 @@
       decodedInstr.rd = RD;
     ",
     "execute": "
-    core.regs[instr.rd] = core.pc_reg + sext<20>(instr.imm) << 12;
+    core.regs[instr.rd] = core.pc_reg + (sext<20>(instr.imm) << 12);
     "
   },
   "jal": {
@@ -406,6 +406,86 @@
     ",
     "execute": "
     core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + core.regs[instr.rs2], 31, 0));
+    "
+  },
+  "slliw": {
+    "decode": "
+      decodedInstr.imm = IMM5;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] << instr.imm, 31, 0));
+    "
+  },
+  "srliw": {
+    "decode": "
+      decodedInstr.imm = IMM5;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1], 31, 0) >> instr.imm);
+    "
+  },
+  "sraiw": {
+    "decode": "
+      decodedInstr.imm = IMM5;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(asSigned<int32_t>(core.regs[instr.rs1]) >> instr.imm);
+    "
+  },
+  "subw": {
+    "decode": "
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] - core.regs[instr.rs2], 31, 0));
+    "
+  },
+  "sllw": {
+    "decode": "
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] << bitsFrom(core.regs[instr.rs2], 4, 0), 31, 0));
+    "
+  },
+  "srlw": {
+    "decode": "
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1], 31, 0) >> bitsFrom(core.regs[instr.rs2], 4, 0));
+    "
+  },
+  "sraw": {
+    "decode": "
+      decodedInstr.rs2 = RS2;
+      decodedInstr.rs1 = RS1;
+      decodedInstr.rd = RD;
+    ",
+    "execute": "
+    core.regs[instr.rd] = sext<32>(asSigned<int32_t>(core.regs[instr.rs1]) >> bitsFrom(core.regs[instr.rs2], 4, 0));
+    "
+  },
+  "lwu": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+    ",
+    "execute": "
+    core.regs[instr.rd] = core.mem.load<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
     "
   }
 }

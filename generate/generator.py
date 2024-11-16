@@ -9,8 +9,10 @@ void simlinx::Core::decode(uint32_t decodedBits, ISA::BasedInstruction& decodedI
 """
 
 execute_cc = """
-Fault execute{{}}(simlinx::Core& core, ISA::BasedInstruction& instr) {
+Fault execute{{}}({{}}simlinx::Core& core, {{}}ISA::BasedInstruction& instr) {
 """
+
+maybe_unused = "[[maybe_unused]]"
 
 class Generator:
     gap=0
@@ -157,7 +159,7 @@ class Generator:
             numFunctions = 0
             for instr in self.enum:
                 numFunctions += 1
-                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])[:-2] + ';\n')
+                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:], 1)[:-2].replace('{{}}', '') + ';\n')
             f.write(f'static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {numFunctions}> executeFunctions = {{ \n') #nullptr,\n')
             for instr in self.enum:
                 f.write('&execute{{}},\n'.replace('{{}}', instr[0]+instr.lower()[1:]))
@@ -179,7 +181,8 @@ class Generator:
                 else:
                     put = '  return Fault::NOT_IMPLEMENTED'
                 instr_debug = ' std::cout << __PRETTY_FUNCTION__ << std::endl;\n instr.dump();' if self.genArgs.debug else ''
-                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:])
+                maybe_unused_attribute = maybe_unused if 'NOT_IMPLEMENTED' in put else ''
+                f.write(execute_cc.replace('{{}}', instr[0]+instr.lower()[1:], 1).replace('{{}}', maybe_unused_attribute)
                         + instr_debug
                         + f'\n{put};\n}};\n'
                         )
@@ -231,6 +234,6 @@ if __name__ == '__main__':
             line = line.split()
             if line:
                 text  = text + line
-    gen = Generator(text, args, json_describtion=['custom.json'])
+    gen = Generator(text, args, json_describtion=['implemented.json'])
     gen.gap = gen.tab
     gen.start()
