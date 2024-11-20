@@ -1,14 +1,14 @@
 #pragma once
 #include "utils/warning.h"
+#include <concepts>
 #include <cstdint>
 #include <span>
 #include <vector>
-#include <concepts>
 
 namespace simlinx {
 
-  using byte  = uint8_t;
-  using word  = uint16_t;
+  using byte = uint8_t;
+  using word = uint16_t;
   using dword = uint32_t;
   using qword = uint64_t;
 
@@ -27,32 +27,31 @@ namespace simlinx {
       return std::span<uint8_t>(raw_ram).subspan(offset, allocate_size);
     }
 
-    template <std::unsigned_integral T>
-    constexpr T load(size_type addr) {
-      T result {};
+    template <std::unsigned_integral T> constexpr T load(size_type addr) {
+      T result{};
       load(addr, result);
       return result;
     }
 
-    constexpr void load(size_type addr, std::unsigned_integral auto& value) {
+    constexpr void load(size_type addr, std::unsigned_integral auto &value) {
       for (auto i = 0uz; i < sizeof(value); ++i) {
-        value |= static_cast<std::decay_t<decltype(value)>>(raw_ram.at(addr + i)) << 8 * i;
+        value |=
+            static_cast<std::decay_t<decltype(value)>>(raw_ram.at(addr + i))
+            << 8 * i;
       }
     }
 
     constexpr void store(size_type addr, std::unsigned_integral auto value) {
       for (auto i = 0uz; i < sizeof(value); ++i) {
-       raw_ram.at(addr + i) = 0xFF & value;
-       value >>= 8;
+        raw_ram.at(addr + i) = 0xFF & value;
+        value >>= 8;
       }
     }
 
-    constexpr byte& operator[](size_type addr) {
-      return raw_ram[addr];
-    }
+    constexpr byte &operator[](size_type addr) { return raw_ram[addr]; }
 
     constexpr byte operator[](size_type addr) const {
-      return const_cast<const RAM*>(this)->operator[](addr);
+      return const_cast<const RAM *>(this)->operator[](addr);
     }
   };
 } // namespace simlinx

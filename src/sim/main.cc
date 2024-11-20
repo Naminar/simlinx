@@ -10,17 +10,18 @@ int main(int argc, char const *argv[]) try {
     return 0;
   }
 
-  auto binary = LIEF::ELF::Parser::parse(argv[1]);  
+  auto binary = LIEF::ELF::Parser::parse(argv[1]);
 
   simlinx::CPU cpu{1_MB};
-  for (auto&& S : binary->sections()) {
+  for (auto &&S : binary->sections()) {
     std::println("{}", S.name());
     auto content = S.content();
     std::println("Content size {}", content.size());
     std::println("Section size {}", S.size());
     std::println("Section vaddr {}", S.virtual_address());
     std::cout << std::hex;
-    std::copy(content.begin(), content.end(), std::ostream_iterator<uint8_t>(std::cout));
+    std::copy(content.begin(), content.end(),
+              std::ostream_iterator<uint8_t>(std::cout));
     std::cout << std::dec;
     std::cout << "\n";
 
@@ -30,7 +31,7 @@ int main(int argc, char const *argv[]) try {
   cpu.run(binary->entrypoint());
 }
 
-catch (std::exception& exc) {
+catch (std::exception &exc) {
   std::cout << "main: ";
   std::cout << exc.what() << std::endl;
 }
