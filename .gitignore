@@ -2,6 +2,7 @@
 .vscode
 
 # Build dirs and files
+**/__pycache__
 **/build
 **/a.out
 **/*.gen.*
