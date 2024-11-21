@@ -188,7 +188,7 @@ class Generator:
                         )
             f.write('}\n')
 
-    def make_header(self, file_name:str, dirHH:str, path=os.getcwd(), **args)->str:
+    def make_header(self, file_name:str, dirHH:str, **args)->str:
         """
         Creates a header file at the specified directory (dirHH) with the given filename
         (file_name), and includes all the header files specified in the argument list.
@@ -204,7 +204,7 @@ class Generator:
         :returns: The path to the created header file
         :rtype: str
         """
-
+        path = os.getcwd()
         include_str = '#pragma once\n'
         madeHeader = dirHH+f'/{file_name}.gen.hh'
         # print(args)
@@ -225,6 +225,9 @@ class Generator:
 
 
 if __name__ == '__main__':
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(current_directory)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-D', '--debug', action='store_true', default=False, help='Enable debug mode.')
     args = parser.parse_args()
