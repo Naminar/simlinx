@@ -386,7 +386,11 @@
     "
   },
   "fence": {},
-  "ecall": {},
+  "ecall": {
+    "decode": "",
+    "execute": "
+    ::Syscall::syscalls[simlinx::Core::Register::a7](core);"
+  },
   "ebreak": {},
   "addiw": {
     "decode": "

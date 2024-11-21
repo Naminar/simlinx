@@ -1,7 +1,9 @@
 # Visual Studio Code configs
 .vscode
-
+.venv
 # Build dirs and files
+generate/syscall/linux
+**/__pycache__
 **/build
 **/a.out
 **/*.gen.*

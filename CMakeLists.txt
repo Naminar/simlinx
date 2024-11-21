@@ -17,6 +17,7 @@ endif()
 
 execute_process(
   COMMAND python3 generate/generator.py
+  COMMAND python3 generate/syscall/sysGen.py
 )
 
 include_directories(include)

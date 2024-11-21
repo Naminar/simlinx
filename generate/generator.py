@@ -171,7 +171,7 @@ class Generator:
 
         with open(self.cpuDirCC+'execute.gen.cc', 'w', encoding='utf-8') as f:
             # f.write(f'#include "{self.cpuDir}/execute.gen.hh"\n')
-            f.write(self.make_header('execute', 'cpu', cpu=['fault', 'core','instruction']))
+            f.write(self.make_header('execute', 'cpu', cpu=['fault', 'core','instruction'], syscall=['syscall.gen']))
             self.make_execute_array_in_header()
             f.write('\nnamespace ISA {\n')
             for instr in self.enum:
