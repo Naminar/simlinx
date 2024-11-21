@@ -18,7 +18,7 @@ namespace simlinx {
     void run(reg_t pc);
     void decode(uint32_t decodedBits, ISA::BasedInstruction &decodedInstr);
     Core(RAM &ram) : mem(ram){};
-  
+
     enum Register {
       zero = 0,
       ra = 1,
