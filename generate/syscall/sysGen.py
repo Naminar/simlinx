@@ -2,6 +2,7 @@ from jinja2 import Template
 from sysParser import parse_linux_syscalls, parse_yaml
 from termcolor import colored
 import os
+import subprocess
 
 template_cc = Template("""
 #include "syscall/syscall.gen.hh"
@@ -37,6 +38,22 @@ std::array<SyscallFunctionType, {{ syscalls|length }}> syscalls = {
 };
 """)
 
+def runcmd(cmd, verbose = False, *args, **kwargs):
+
+    process = subprocess.Popen(
+        cmd,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.PIPE,
+        text = True,
+        shell = True
+    )
+    std_out, std_err = process.communicate()
+    if verbose:
+        print(std_out.strip(), std_err)
+    pass
+
+
+
 path = os.getcwd()
 if 'simlinx' in path:
     path = path.split('simlinx')[0]
@@ -44,6 +61,16 @@ if 'simlinx' in path:
 else:
     print(colored('simlinx directory not found', 'red'))
     exit()
+
+if not os.path.exists(path + 'generate/syscall/linux'):
+    print(colored('Director was not found, createing simlinx/generate/syscall/linux', 'yellow'))
+    os.makedirs(path + 'generate/syscall/linux')
+
+if not os.path.exists(path + 'generate/syscall/linux/syscalls.h'): 
+    runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/linux/syscalls.h', verbose = True)
+
+if not os.path.exists(path + 'generate/syscall/linux/unistd.h'): 
+    runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/uapi/asm-generic/unistd.h', verbose=True)
 
 syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
 # print(syscalls)
