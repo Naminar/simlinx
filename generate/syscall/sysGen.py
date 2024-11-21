@@ -7,6 +7,7 @@ import subprocess
 template_cc = Template("""
 #include "syscall/syscall.gen.hh"
 
+namespace Syscall {
 {% for syscall in syscalls %}
 // {{ syscall.enum}}
 // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
@@ -21,6 +22,15 @@ Core& core) {
     return; 
 }
 {% endfor %}
+
+std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
+{% for key, value in sys_enum_dict.items() %}
+  {{ value }}{{ ", " if not loop.last else "" }}
+{%- endfor -%}
+{% if true -%}\n{%- endif %}
+};                       
+                       
+}
 """)
 
 template_hh = Template("""
@@ -30,6 +40,7 @@ template_hh = Template("""
 #include <stdio.h>
 #include "cpu/core.hh"
 
+namespace Syscall {
 using simlinx::Core;
 
 {% for syscall in syscalls %}
@@ -37,12 +48,8 @@ void {{ syscall.name }}(Core&);
 {% endfor %}
 
 using SyscallFunctionType = std::function<void(Core&)>;
-std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
-{% for key, value in sys_enum_dict.items() %}
-  {{ value }}{{ ", " if not loop.last else "" }}
-{%- endfor -%}
-{% if true -%}\n{%- endif %}
-};
+extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
+}
 """)
 
 def runcmd(cmd, verbose = False, *args, **kwargs):
@@ -97,7 +104,7 @@ for syscall in syscalls:
     else:
         syscall['enum'] = 'not implemented'
 
-output = template_cc.render(syscalls=syscalls)
+output = template_cc.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum)
 print(output)
 
 
