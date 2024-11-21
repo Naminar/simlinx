@@ -6,10 +6,11 @@
   * [2017](https://riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf)
 
 
-Auto-generation
-```
-cd generate
-python3 generator.py
+## Building
+Run this command from the root directory of this repository:
+```shell
+cmake -B build
+cmake --build build
 ```
 
 ```
