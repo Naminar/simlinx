@@ -34,18 +34,6 @@ std::array<SyscallFunctionType, {{ syscalls|length }}> syscalls = {
 };
 """)
 
-
-syscalls=parse_yaml('syscalls.yaml')
-# print(syscalls)
-
-sys_enum = parse_linux_syscalls()
-
-for syscall in syscalls:
-    syscall['enum'] = sys_enum[syscall['name']]
-
-output = template_cc.render(syscalls=syscalls)
-print(output)
-
 path = os.getcwd()
 if 'simlinx' in path:
     path = path.split('simlinx')[0]
@@ -53,6 +41,18 @@ if 'simlinx' in path:
 else:
     print(colored('simlinx directory not found', 'red'))
     exit()
+
+syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
+# print(syscalls)
+
+sys_enum = parse_linux_syscalls(path+'generate/syscall/')
+
+for syscall in syscalls:
+    syscall['enum'] = sys_enum[syscall['name']]
+
+output = template_cc.render(syscalls=syscalls)
+print(output)
+
 
 if not os.path.exists(path + 'src/syscall'):
     print(colored('Director was not found, createing simlinx/src/syscall', 'yellow'))

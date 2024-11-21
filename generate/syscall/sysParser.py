@@ -1,13 +1,13 @@
 import re
 import yaml
 
-def parse_linux_syscalls():
-    with open('linux/syscalls.h', 'r') as f:
+def parse_linux_syscalls(path):
+    with open( path+'linux/syscalls.h', 'r') as f:
         syscalls = f.readlines()
 
     syscall_start = None
     syscalls_enum = dict()
-    with open('linux/unistd.h', 'r') as f:
+    with open(path+'linux/unistd.h', 'r') as f:
         for line in f.readlines():
             m = re.search('#define __.+ ([0-9]+)', line)
             if m:
