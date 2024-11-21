@@ -1,6 +1,6 @@
 # Visual Studio Code configs
 .vscode
-
+.venv
 # Build dirs and files
 **/__pycache__
 **/build

@@ -7,7 +7,16 @@
   * [2017](https://riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf)
 
 ## Preparing
-To install python's dependeces:
+To set python's environment:
+```
+python3 -m venv .venv
+
+# for fish
+source .venv/bin/activate.fish
+# for bash .venv/bin/activate 
+```
+
+To install python's dependents:
 ```bash
 pip install -r requirements.txt
 ```
