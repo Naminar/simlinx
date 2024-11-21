@@ -10,7 +10,13 @@ template_cc = Template("""
 {% for syscall in syscalls %}
 // {{ syscall.enum}}
 // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
-void {{ syscall.name }}(Core& core) {
+void {{ syscall.name }}(
+
+{%- if syscall.name == 'not_implemented_syscall' -%}
+    [[maybe_unused]] 
+{%- endif -%}
+
+Core& core) {
 {{ syscall.do | indent(4) }}
     return; 
 }
@@ -31,10 +37,11 @@ void {{ syscall.name }}(Core&);
 {% endfor %}
 
 using SyscallFunctionType = std::function<void(Core&)>;
-std::array<SyscallFunctionType, {{ syscalls|length }}> syscalls = {
-    {% for syscall in syscalls %}
-    {{ syscall.name }} {{ ", " if not loop.last else "" }}
-    {% endfor %}
+std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
+{% for key, value in sys_enum_dict.items() %}
+  {{ value }}{{ ", " if not loop.last else "" }}
+{%- endfor -%}
+{% if true -%}\n{%- endif %}
 };
 """)
 
@@ -76,9 +83,19 @@ syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
 # print(syscalls)
 
 sys_enum = parse_linux_syscalls(path+'generate/syscall/')
+sys_enum_int_list = list(sys_enum.values())
+sys_enum_dict = {}
+for i in range(len(sys_enum_int_list)):
+    sys_enum_dict[sys_enum_int_list[i]] = 'not_implemented_syscall'
+    sys_enum_int_list[i] = int(sys_enum_int_list[i])
+max_sys_enum = max(sys_enum_int_list) + 1
 
 for syscall in syscalls:
-    syscall['enum'] = sys_enum[syscall['name']]
+    if syscall['name'] != 'not_implemented_syscall':
+        syscall['enum'] = sys_enum[syscall['name']]
+        sys_enum_dict[sys_enum[syscall['name']]] = syscall['name']
+    else:
+        syscall['enum'] = 'not implemented'
 
 output = template_cc.render(syscalls=syscalls)
 print(output)
@@ -94,4 +111,4 @@ if not os.path.exists(path + 'include/syscall'):
     print(colored('Director was not found, createing simlinx/include/syscall', 'yellow'))
     os.makedirs(path + 'include/syscall')
 with open(path + 'include/syscall/syscall.gen.hh', 'w', encoding='utf-8') as f:
-    f.write(template_hh.render(syscalls=syscalls))
+    f.write(template_hh.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum))

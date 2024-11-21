@@ -1,4 +1,0 @@
-script: |
-  echo "Starting process..."
-  ./process.sh
-  echo "Process completed."
