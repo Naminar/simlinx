@@ -8,7 +8,7 @@
 
 ## Preparing
 To set python's environment:
-```
+```shell
 python3 -m venv .venv
 
 # for fish
@@ -17,18 +17,19 @@ source .venv/bin/activate.fish
 ```
 
 To install python's dependents:
-```bash
+```shell
 pip install -r requirements.txt
 ```
 
-Auto-generation
-```bash
-cd generate
-python3 generator.py
-python3 syscall/sysGen.py
+
+## Building
+Run this command from the root directory of this repository:
+```shell
+cmake -B build
+cmake --build build
 ```
 
-```bash
+```shell
 riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 --static -Wl,-emain riscv-examples/src/fib.cc
 riscv64-linux-gnu-objdump -M no-aliases -M numeric -d
 ```
