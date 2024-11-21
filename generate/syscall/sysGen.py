@@ -4,12 +4,12 @@ from termcolor import colored
 import os
 
 template_cc = Template("""
-#include "syscall.gen.hh"
+#include "syscall/syscall.gen.hh"
 
 {% for syscall in syscalls %}
 // {{ syscall.enum}}
 // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
-void {{ syscall.name }}(simlinx::Core& core) {
+void {{ syscall.name }}(Core& core) {
 {{ syscall.do | indent(4) }}
     return; 
 }
@@ -21,12 +21,15 @@ template_hh = Template("""
 #include <functional>
 #include <stdint.h>
 #include <stdio.h>
+#include "cpu/core.hh"
+
+using simlinx::Core;
 
 {% for syscall in syscalls %}
-void {{ syscall.name }}(simlinx::Core&);
+void {{ syscall.name }}(Core&);
 {% endfor %}
 
-using SyscallFunctionType = std::function<void(simlinx::Core&)>;
+using SyscallFunctionType = std::function<void(Core&)>;
 std::array<SyscallFunctionType, {{ syscalls|length }}> syscalls = {
     {% for syscall in syscalls %}
     {{ syscall.name }} {{ ", " if not loop.last else "" }}
