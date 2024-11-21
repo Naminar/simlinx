@@ -25,6 +25,7 @@ Auto-generation
 ```bash
 cd generate
 python3 generator.py
+python3 syscall/sysGen.py
 ```
 
 ```bash
