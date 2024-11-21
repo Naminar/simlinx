@@ -8,7 +8,6 @@
 #include <iostream>
 #include <vector>
 
-
 namespace ISA {
 
   inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }

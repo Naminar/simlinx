@@ -1,8 +1,7 @@
 int fibonacci_recursive(int n) {
-    if (n <= 1) return 1;
-    return fibonacci_recursive(n - 1) + 1;
+  if (n <= 1)
+    return 1;
+  return fibonacci_recursive(n - 1) + 1;
 }
 
-int main() {
-    return fibonacci_recursive(17);
-}
+int main() { return fibonacci_recursive(17); }
