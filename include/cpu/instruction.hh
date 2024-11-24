@@ -47,11 +47,8 @@ namespace ISA {
     uint64_t rd = 0;
     uint64_t rs1 = 0;
     uint64_t rs2 = 0;
-    uint64_t rs3 = 0;
     uint64_t csr = 0;
     uint64_t imm = 0;
-    uint64_t op1 = 0;
-    uint64_t op2 = 0;
 
     void reset() {
       instrBits = 0;
@@ -61,7 +58,6 @@ namespace ISA {
       rd = 0;
       rs1 = 0;
       rs2 = 0;
-      rs3 = 0;
       csr = 0;
       imm = 0;
     }
@@ -85,7 +81,6 @@ namespace ISA {
       _dump(rd, "rd");
       _dump(rs1, "rs1");
       _dump(rs2, "rs2");
-      _dump(rs3, "rs3");
       _dump(imm, "imm");
     }
   };

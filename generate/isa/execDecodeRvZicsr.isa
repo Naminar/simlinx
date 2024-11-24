@@ -1,0 +1,79 @@
+{
+  "csrrw": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    if (core.regs[instr.rd] == 0) {
+        core.CSRs[instr.csr] = core.regs[instr.rs1];
+        return NO_FAULT;    
+    }
+
+    reg_t tmp = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = core.regs[instr.rs1];
+    core.regs[instr.rd] = tmp;
+    "
+  },
+  "csrrs": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    reg_t tmp = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = tmp | core.regs[instr.rs1];
+    core.regs[instr.rd] = tmp;
+    "
+  },
+  "csrrc": {
+    "decode": "
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    reg_t tmp = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = tmp & ~core.regs[instr.rs1];
+    core.regs[instr.rd] = tmp;
+    "
+  },
+  "csrrwi": {
+    "decode": "
+    decodedInstr.imm = ZIMM;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    /*if (isntr.rd != 0)*/
+    core.regs[instr.rd] = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = instr.imm;
+    "
+  },
+  "csrrsi": {
+    "decode": "
+    decodedInstr.imm = ZIMM;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    reg_t tmp = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = tmp | instr.imm;
+    core.regs[instr.rd] = tmp;
+    "
+  },
+  "csrrci": {
+    "decode": "
+    decodedInstr.imm = ZIMM;
+    decodedInstr.rd = RD;
+    decodedInstr.csr = CSR;
+    ",
+    "execute": "
+    reg_t tmp = core.CSRs[instr.csr];
+    core.CSRs[instr.csr] = tmp & ~instr.imm;
+    core.regs[instr.rd] = tmp;
+    "
+  }
+}

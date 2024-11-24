@@ -25,17 +25,20 @@ class Generator:
     cpuDirCC = f'../src/{cpuDir}/'
     cpuDirHH = f'../include/{cpuDir}/'
 
-    def __init__(self, text: list, args, json_describtion: list):
+    def __init__(self, text: list, args, implemented_json: list, isa: list):
         self.txt = text
         self.genArgs = args
         self.isa = dict()
+        self.decodeExec = dict()
         self.enum = []
-        for file in json_describtion:
+
+        for file in implemented_json:
+            file = 'implemented/' + file
             self.isa.update(json.load(open(file, 'r', encoding="utf-8")))
 
-        with open('execDecode.isa', 'r', encoding='utf-8') as f:
-            self.decodeExec = f.read().replace('\n', '')
-            self.decodeExec = json.loads(self.decodeExec)
+        for file in isa:
+            file = 'isa/' + file
+            self.decodeExec.update(json.loads(open(file, 'r', encoding='utf-8').read().replace('\n', '')))
 
 
     def get_token(self, who:str='noone')->str:
@@ -173,7 +176,7 @@ class Generator:
             # f.write(f'#include "{self.cpuDir}/execute.gen.hh"\n')
             f.write(self.make_header('execute', 'cpu', cpu=['fault', 'core','instruction'], syscall=['syscall.gen']))
             self.make_execute_array_in_header()
-            f.write('\nnamespace ISA {\n')
+            f.write('\nnamespace ISA {\n using reg_t = uint64_t;\n')
             for instr in self.enum:
                 put = self.decodeExec[instr.lower()]['execute'] if 'execute' in self.decodeExec[instr.lower()] else ''
                 if put:
@@ -232,11 +235,16 @@ if __name__ == '__main__':
     parser.add_argument('-D', '--debug', action='store_true', default=False, help='Enable debug mode.')
     args = parser.parse_args()
     text = []
-    with open('decoderTree.isa', 'r', encoding="utf-8") as f:
+    with open('isa/decoderTree.isa', 'r', encoding="utf-8") as f:
         for line in f:
             line = line.split()
             if line:
                 text  = text + line
-    gen = Generator(text, args, json_describtion=['implemented.json'])
+    gen = Generator(
+        text, args,
+        implemented_json=['implemented.json', 'rv_zicsr.json'],
+        isa = ['execDecode.isa', 'execDecodeRvZicsr.isa']
+    )
+
     gen.gap = gen.tab
     gen.start()

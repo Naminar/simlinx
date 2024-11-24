@@ -10,6 +10,7 @@ namespace simlinx {
 
   public:
     reg_t &operator[](T index) { return regs[index]; }
+    reg_t &operator[](reg_t index) { return regs[index]; }
   };
 
 } // namespace simlinx
