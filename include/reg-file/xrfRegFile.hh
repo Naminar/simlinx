@@ -1,27 +1,10 @@
 #pragma once
-#include "cpu/instruction.hh"
-#include "ram/ram.hh"
-#include "reg-file/csrRegFile.hh"
-#include <array>
-#include <cstdint>
+#include "baseRegFile.hh"
 
 namespace simlinx {
-  struct Core final {
-  public:
-    using reg_t = uint64_t;
 
-  public:
-    CSR CSRs;
-    std::array<reg_t, 32> regs;
-    reg_t pc_reg = 0U;
-    RAM &mem;
-
-  public:
-    void run(reg_t pc);
-    void decode(uint32_t decodedBits, ISA::BasedInstruction &decodedInstr);
-    Core(RAM &ram) : mem(ram){};
-
-    enum Register {
+  namespace XRFRegister {
+    enum XRFRegisterEnum {
       zero = 0,
       ra = 1,
       sp = 2,
@@ -56,5 +39,8 @@ namespace simlinx {
       t5 = 30,
       t6 = 31
     };
-  };
+  }
+
+  template <uint32_t N>
+  class XRF : public BaseRegFile<N, XRFRegister::XRFRegisterEnum> {};
 } // namespace simlinx
