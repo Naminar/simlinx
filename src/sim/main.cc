@@ -3,11 +3,16 @@
 #include <exception>
 #include <iostream>
 #include <print>
+#include "spdlog/spdlog.h"
 
 int main(int argc, char const *argv[]) try {
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <riscv elf file>" << std::endl;
     return 0;
+  }
+
+  if constexpr (SPDLOG_ACTIVE_LEVEL == SPDLOG_LEVEL_DEBUG) {
+    spdlog::set_level(spdlog::level::debug);
   }
 
   auto binary = LIEF::ELF::Parser::parse(argv[1]);
