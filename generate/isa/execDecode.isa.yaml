@@ -1,0 +1,452 @@
+- instruction: lui
+  decode: |
+    decodedInstr.imm = IMM20;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<20>(instr.imm) << 12;
+
+
+- instruction: auipc
+  decode: |
+    decodedInstr.imm = IMM20;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.pc_reg + (sext<20>(instr.imm) << 12);
+
+
+- instruction: jal
+  decode: |
+    decodedInstr.rd = RD;
+    decodedInstr.imm = bitsFrom(decodedBits,  31,  31) << 20
+                          | bitsFrom(decodedBits, 19, 12) << 12
+                          | bitsFrom(decodedBits, 20, 20) << 11
+                          | bitsFrom(decodedBits, 30, 21) << 1;
+  execute: |
+    core.regs[instr.rd] = core.pc_reg + 4;
+    core.pc_reg += sext<21>(instr.imm);
+
+
+- instruction: jalr
+  decode: |
+    decodedInstr.rd = RD;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = core.pc_reg + 4;
+    core.pc_reg = (core.regs[instr.rs1] + sext<12>(instr.imm)) &  ~1U;
+
+
+- instruction: beq
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (core.regs[instr.rs1] == core.regs[instr.rs2])? sext<13>(instr.imm) : 0U;
+
+
+- instruction: bne
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (core.regs[instr.rs1] != core.regs[instr.rs2])? sext<13>(instr.imm) : 0U;
+
+
+- instruction: blt
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (asSigned(core.regs[instr.rs1]) < asSigned(core.regs[instr.rs2]))? sext<13>(instr.imm) : 0U;
+
+
+- instruction: bge
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (asSigned(core.regs[instr.rs1]) >= asSigned(core.regs[instr.rs2]))? sext<13>(instr.imm) : 0U;
+
+
+- instruction: bltu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (core.regs[instr.rs1] < core.regs[instr.rs2])? sext<13>(instr.imm) : 0U;
+
+
+- instruction: bgeu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = bitsFrom(decodedBits, 7, 7) << 11
+                        | bitsFrom(decodedBits, 11, 8) << 1
+                        | bitsFrom(decodedBits, 30, 25) << 5
+                        | bitsFrom(decodedBits, 31, 31) << 12;
+  execute: |
+    core.pc_reg += (core.regs[instr.rs1] >= core.regs[instr.rs2])? sext<13>(instr.imm) : 0U;
+
+
+- instruction: lb
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = sext<8>(
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0)
+                            );
+
+
+- instruction: lh
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = sext<16>(
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0)
+                            );
+
+
+- instruction: lw
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = sext<32>(
+                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 31, 0)
+                            );
+
+
+- instruction: ld
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
+
+
+- instruction: lbu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0);
+
+
+- instruction: lhu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0);
+
+
+- instruction: sb
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
+  execute: |
+    core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 7, 0));
+
+
+- instruction: sh
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
+  execute: |
+    core.mem.store<uint16_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 15, 0));
+
+
+- instruction: sw
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
+  execute: |
+    core.mem.store<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
+
+
+- instruction: sd
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.imm = IMM12HI << 5 | IMM12LO;
+  execute: |
+    core.mem.store<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 63, 0));
+
+
+- instruction: addi
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] + sext<12>(instr.imm);
+
+
+- instruction: slti
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) < asSigned(sext<12>(instr.imm));
+
+- instruction: sltiu
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] < sext<12>(instr.imm);
+
+
+- instruction: xori
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] ^ sext<12>(instr.imm);
+
+
+- instruction: ori
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] | sext<12>(instr.imm);
+
+- instruction: andi
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] & sext<12>(instr.imm);
+
+
+- instruction: add
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] + core.regs[instr.rs2];
+
+
+- instruction: sub
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] - core.regs[instr.rs2];
+
+
+- instruction: sll
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] << core.regs[instr.rs2];
+
+
+- instruction: slt
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) < asSigned(core.regs[instr.rs2]);
+
+
+- instruction: sltu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] < core.regs[instr.rs2];
+
+
+- instruction: xor
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] ^ core.regs[instr.rs2];
+
+
+- instruction: srl
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] >> core.regs[instr.rs2];
+
+
+- instruction: sra
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = asSigned(core.regs[instr.rs1]) >> core.regs[instr.rs2];
+
+
+- instruction: or
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] | core.regs[instr.rs2];
+
+
+- instruction: and
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] & core.regs[instr.rs2];
+
+
+- instruction: fence
+  decode: |
+  execute: |
+
+
+- instruction: ecall
+  decode: |
+  execute: |
+    ::Syscall::syscalls[simlinx::Core::Register::a7](core);
+
+
+- instruction: ebreak
+  decode: |
+  execute: |
+
+
+- instruction: addiw
+  decode: |
+    decodedInstr.imm = IMM12;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + sext<12>(instr.imm), 31, 0));
+
+
+- instruction: addw
+  decode: |
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + core.regs[instr.rs2], 31, 0));
+
+
+- instruction: slliw
+  decode: |
+    decodedInstr.imm = IMM5;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] << instr.imm, 31, 0));
+
+
+- instruction: srliw
+  decode: |
+    decodedInstr.imm = IMM5;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1], 31, 0) >> instr.imm);
+
+
+- instruction: sraiw
+  decode: |
+    decodedInstr.imm = IMM5;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(asSigned<int32_t>(core.regs[instr.rs1]) >> instr.imm);
+
+
+- instruction: subw
+  decode: |
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] - core.regs[instr.rs2], 31, 0));
+
+
+- instruction: sllw
+  decode: |
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] << bitsFrom(core.regs[instr.rs2], 4, 0), 31, 0));
+
+
+- instruction: srlw
+  decode: |
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1], 31, 0) >> bitsFrom(core.regs[instr.rs2], 4, 0));
+
+
+- instruction: sraw
+  decode: |
+    decodedInstr.rs2 = RS2;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = sext<32>(asSigned<int32_t>(core.regs[instr.rs1]) >> bitsFrom(core.regs[instr.rs2], 4, 0));
+
+
+- instruction: lwu
+  decode: |
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+    decodedInstr.imm = IMM12;
+  execute: |
+    core.regs[instr.rd] = core.mem.load<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm));

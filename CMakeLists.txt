@@ -17,6 +17,8 @@ endif()
 
 execute_process(
   COMMAND python3 generate/generator.py
+)
+execute_process(
   COMMAND python3 generate/syscall/sysGen.py
 )
 
