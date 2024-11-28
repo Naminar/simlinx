@@ -355,7 +355,7 @@
 - instruction: ecall
   decode: |
   execute: |
-    ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
+    return ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
 
 
 - instruction: ebreak
