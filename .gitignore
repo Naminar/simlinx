@@ -1,6 +1,14 @@
 # Visual Studio Code configs
-.vscode
+.vscode/
+.VSCodeCounter/
+
+# Python packages
 .venv
+**/*.egg-info/
+
+# Tests
+riscv-tests-64*
+
 # Build dirs and files
 generate/syscall/linux
 **/__pycache__
