@@ -4,6 +4,7 @@
 #include <iostream>
 #include <print>
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 
 int main(int argc, char const *argv[]) try {
   if (argc != 2) {
@@ -19,20 +20,18 @@ int main(int argc, char const *argv[]) try {
 
   simlinx::CPU cpu{1_MB};
   for (auto &&S : binary->sections()) {
-    std::println("{}", S.name());
     auto content = S.content();
-    std::println("Content size {}", content.size());
-    std::println("Section size {}", S.size());
-    std::println("Section vaddr {}", S.virtual_address());
-    std::cout << std::hex;
-    std::copy(content.begin(), content.end(),
-              std::ostream_iterator<uint8_t>(std::cout));
-    std::cout << std::dec;
-    std::cout << "\n";
-
     auto mem_for_segment = cpu.m_ram.get_memory(S.size(), S.virtual_address());
     std::copy(content.begin(), content.end(), mem_for_segment.begin());
+
+    SPDLOG_DEBUG("Parse section {}", S.name());
+    SPDLOG_DEBUG("Content size: {}", content.size());
+    SPDLOG_DEBUG("Section size: {}", S.size());
+    SPDLOG_DEBUG("Section vaddr: {}", S.virtual_address());
+    SPDLOG_DEBUG("Content: {}", spdlog::to_hex(content.begin(), content.end()));
   }
+
+  SPDLOG_DEBUG("Entry point: {}", binary->entrypoint());
   cpu.run(binary->entrypoint());
 }
 

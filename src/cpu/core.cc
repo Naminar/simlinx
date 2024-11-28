@@ -3,6 +3,7 @@
 #include <bitset>
 #include <iostream>
 #include <print>
+#include "spdlog/spdlog.h"
 
 namespace simlinx {
 
@@ -15,14 +16,14 @@ namespace simlinx {
         auto prev_pc = pc_reg;
         ISA::BasedInstruction inst;
         auto decodedBits = mem.load<uint32_t>(pc_reg);
-        std::cout << "PC = " << std::hex << pc_reg << " " << std::dec;
+        SPDLOG_DEBUG("PC = {:#x}", pc_reg);
+
         decode(decodedBits, inst);
         if (inst.instrId == InstrId::NONE) {
           std::cout << std::dec << " | InstrId = " << inst.instrId << std::endl;
           std::cout << "reg[10] " << regs[10] << "| reg[11] " << regs[11]
                     << std::endl;
           int x = 0;
-          std::cout << "===========================" << std::endl;
           for (auto reg : regs) {
             std::cout << "reg [" << x << "] " << reg << std::endl;
             x += 1;
@@ -32,7 +33,6 @@ namespace simlinx {
 
         try {
           auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
-          std::cout << std::endl;
           if (fault != Fault::NO_FAULT) {
             std::cout << "fault = " << fault << std::endl;
             return;
@@ -46,7 +46,7 @@ namespace simlinx {
         if (pc_reg == prev_pc)
           pc_reg += sizeof(uint32_t);
         else {
-          std::cout << "jump" << std::endl;
+          SPDLOG_DEBUG("jump");
         }
       }
 
