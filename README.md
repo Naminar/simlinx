@@ -30,6 +30,12 @@ cmake -B build
 cmake --build build
 ```
 
+## Run test
+```shell
+python3 installTests.py
+bash bash run_tests.sh > run_tests.txt
+```
+
 Some customization as ninja or build in parallel:
 ```shell
 # to install ninja
