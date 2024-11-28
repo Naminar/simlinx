@@ -32,8 +32,9 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.imm = IMM12;
   execute: |
-    core.regs[instr.rd] = core.pc_reg + 4;
+    reg_t tmp = core.pc_reg + 4;
     core.pc_reg = (core.regs[instr.rs1] + sext<12>(instr.imm)) &  ~1U;
+    core.regs[instr.rd] = tmp;
 
 
 - instruction: beq
@@ -382,7 +383,7 @@
 
 - instruction: slli
   decode: |
-    decodedInstr.imm = IMM5;
+    decodedInstr.imm = IMM6; // RV64 mode
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
