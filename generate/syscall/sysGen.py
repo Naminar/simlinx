@@ -50,12 +50,13 @@ if __name__ == "__main__":
     {% endfor %}
 
     std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
-    {% for key, value in sys_enum_dict.items() %}
-    {{ value }}{{ ", " if not loop.last else "" }}
+    {% for _ in enum_range %}
+    {% if _ not in sys_enum_dict.keys() %}
+    not_implemented_syscall{{ ", " if not loop.last else "" }}{% else %}
+    {{ sys_enum_dict[_] }}{{ ", " if not loop.last else "" }}{% endif %}
     {%- endfor -%}
     {% if true -%}\n{%- endif %}
     };                       
-                        
     }
     """)
 
@@ -91,26 +92,20 @@ if __name__ == "__main__":
         runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/uapi/asm-generic/unistd.h', verbose=True)
 
     syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
-    # print(syscalls)
-
     sys_enum = parse_linux_syscalls(path+'generate/syscall/')
-    sys_enum_int_list = list(sys_enum.values())
+    sys_enum_int_list = [sys[1] for sys in sys_enum]
     sys_enum_dict = {}
     for i in range(len(sys_enum_int_list)):
-        sys_enum_dict[sys_enum_int_list[i]] = 'not_implemented_syscall'
         sys_enum_int_list[i] = int(sys_enum_int_list[i])
     max_sys_enum = max(sys_enum_int_list) + 1
 
     for syscall in syscalls:
         if syscall['name'] != 'not_implemented_syscall':
-            syscall['enum'] = sys_enum[syscall['name']]
-            sys_enum_dict[sys_enum[syscall['name']]] = syscall['name']
+            syscall['enum'] = [sys for sys in sys_enum if sys[0] == syscall['name']][0][1]
+            sys_enum_dict[syscall['enum']] = syscall['name']
         else:
             syscall['enum'] = 'not implemented'
-
-    output = template_cc.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum)
-    # print(output)
-
+    output = template_cc.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum, enum_range=[str(_) for _ in range(max_sys_enum)])
 
     if not os.path.exists(path + 'src/syscall'):
         print(colored('Director was not found, createing simlinx/src/syscall', 'yellow'))

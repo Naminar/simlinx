@@ -354,7 +354,7 @@
 - instruction: ecall
   decode: |
   execute: |
-    ::Syscall::syscalls[simlinx::Core::Register::a7](core);
+    ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
 
 
 - instruction: ebreak
@@ -380,6 +380,15 @@
     core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] + core.regs[instr.rs2], 31, 0));
 
 
+- instruction: slli
+  decode: |
+    decodedInstr.imm = IMM5;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] << instr.imm;
+
+
 - instruction: slliw
   decode: |
     decodedInstr.imm = IMM5;
@@ -387,6 +396,15 @@
     decodedInstr.rd = RD;
   execute: |
     core.regs[instr.rd] = sext<32>(bitsFrom(core.regs[instr.rs1] << instr.imm, 31, 0));
+
+
+- instruction: srli
+  decode: |
+    decodedInstr.imm = IMM5;
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[instr.rd] = core.regs[instr.rs1] >> instr.imm;
 
 
 - instruction: srliw
@@ -450,3 +468,8 @@
     decodedInstr.imm = IMM12;
   execute: |
     core.regs[instr.rd] = core.mem.load<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
+
+
+- instruction: mret
+  decode: ""
+  execute: ""

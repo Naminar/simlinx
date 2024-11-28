@@ -12,7 +12,7 @@ int main(int argc, char const *argv[]) try {
 
   auto binary = LIEF::ELF::Parser::parse(argv[1]);
 
-  simlinx::CPU cpu{1_MB};
+  simlinx::CPU cpu{3_GB};
   for (auto &&S : binary->sections()) {
     std::println("{}", S.name());
     auto content = S.content();
