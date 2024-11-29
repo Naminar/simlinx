@@ -20,9 +20,8 @@ namespace ISA {
     return (nbits >= 64) ? (uint64_t)-1LL : (1ULL << nbits) - 1;
   }
 
-  template <typename U>
-  constexpr inline U mask(unsigned nbits) {
-    return (nbits >= sizeof(U)*8) ? (U)-1LL : ((U)1 << nbits) - 1;
+  template <typename U> constexpr inline U mask(unsigned nbits) {
+    return (nbits >= sizeof(U) * 8) ? (U)-1LL : ((U)1 << nbits) - 1;
   }
 
   template <class T>
@@ -47,29 +46,29 @@ namespace ISA {
     return val;
   }
 
-  template <typename T>
-  void printBinary(T value) {
-      for (int i = sizeof(T)*8-1; i >= 0; --i) {
-          // Check if the i-th bit is set
-          std::cout << bool((value >> i) & 1);
-      }
-      std::cout << std::endl;
+  template <typename T> void printBinary(T value) {
+    for (int i = sizeof(T) * 8 - 1; i >= 0; --i) {
+      // Check if the i-th bit is set
+      std::cout << bool((value >> i) & 1);
+    }
+    std::cout << std::endl;
   }
 
   // !!!! IMPORTANT !!!!
-  // None C++ standard 
+  // None C++ standard
   // GCC compiler support __int128
   using uint128_t = unsigned __int128;
   using int128_t = __int128;
 
   // !!!! IMPORTANT !!!!
   // NEVER USE std::bitset to manipulate 128 bit values
-  // 
-  template <typename OUT, typename IN> constexpr inline OUT sextDoubleSize(IN val) {
-    bool sign_bit = bitsFrom(val, sizeof(IN)*8 - 1, sizeof(IN)*8 - 1);
-    OUT outVal = (OUT) val;
+  //
+  template <typename OUT, typename IN>
+  constexpr inline OUT sextDoubleSize(IN val) {
+    bool sign_bit = bitsFrom(val, sizeof(IN) * 8 - 1, sizeof(IN) * 8 - 1);
+    OUT outVal = (OUT)val;
     if (sign_bit)
-      outVal |= ~mask<OUT>(sizeof(IN)*8);
+      outVal |= ~mask<OUT>(sizeof(IN) * 8);
     return outVal;
   }
 

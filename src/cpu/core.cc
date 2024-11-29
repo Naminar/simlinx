@@ -34,7 +34,7 @@ namespace simlinx {
           auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
           std::cout << std::endl;
           if (fault != Fault::NO_FAULT) {
-            std::cout << "fault = " << (int) fault << std::endl;
+            std::cout << "fault = " << (int)fault << std::endl;
             return;
           }
         } catch (std::exception &e) {
