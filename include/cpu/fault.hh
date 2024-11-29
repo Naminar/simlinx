@@ -1,9 +1,10 @@
 #pragma once
 
-enum Fault {
+enum class Fault {
   NO_FAULT,
   NOT_IMPLEMENTED,
   ILLEGAL_INSTRUCTION,
   LOAD_ACCESS_FAULT,
   STORE_ACCESS_FAULT,
+  THE_END_OF_TASK
 };

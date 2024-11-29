@@ -37,7 +37,7 @@ if __name__ == "__main__":
     {% for syscall in syscalls %}
     // {{ syscall.enum}}
     // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
-    void {{ syscall.name }}(
+    Fault {{ syscall.name }}(
 
     {%- if syscall.name == 'not_implemented_syscall' -%}
         [[maybe_unused]] 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     Core& core) {
     {{ syscall.do | indent(4) }}
-        return; 
+        return Fault::NO_FAULT;
     }
     {% endfor %}
 
@@ -66,15 +66,16 @@ if __name__ == "__main__":
     #include <stdint.h>
     #include <stdio.h>
     #include "cpu/core.hh"
+    #include "cpu/fault.hh"
 
     namespace Syscall {
     using simlinx::Core;
 
     {% for syscall in syscalls %}
-    void {{ syscall.name }}(Core&);
+    Fault {{ syscall.name }}(Core&);
     {% endfor %}
 
-    using SyscallFunctionType = std::function<void(Core&)>;
+    using SyscallFunctionType = std::function<Fault(Core&)>;
     extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
     }
     """)

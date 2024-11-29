@@ -12,7 +12,7 @@ class YamlHandler:
     implDecodedInstrSet = []
     implInstrNames = []
     implInstrNotInTree = []
-    findedInstr = None
+    foundInstr = None
 
     def __init__(self):
         self.path = find_simlinx_dir()
@@ -22,7 +22,7 @@ class YamlHandler:
             if instr['instruction'] == name:
                 self.implInstrNotInTree.remove(name)
                 self.set_decoded_instr(instr)
-                self.findedInstr = instr
+                self.foundInstr = instr
                 return instr
         return None
 
@@ -55,7 +55,7 @@ class YamlHandler:
             print(colored(f'WARNING: {instr} not in decode tree.', 'yellow'))
 
     def creat_decoder_block(self, tab):
-        return decoder_block_tmpl.render(instr_id=self.findedInstr['instruction'].upper(), decode=self.findedInstr['decode'], tab=tab)
+        return decoder_block_tmpl.render(instr_id=self.foundInstr['instruction'].upper(), decode=self.foundInstr['decode'], tab=tab)
 
     def handle_execute(self):
         with open(self.path+'src/cpu/execute.gen.cc', 'w', encoding='utf-8') as executeCC:
