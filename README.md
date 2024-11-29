@@ -19,6 +19,7 @@ source .venv/bin/activate.fish
 To install python's dependents:
 ```shell
 pip install -r requirements.txt
+pip install -e .
 ```
 
 
@@ -29,6 +30,21 @@ cmake -B build
 cmake --build build
 ```
 
+Some customization as ninja or build in parallel:
+```shell
+# to install ninja
+sudo apt-get update
+sudo apt-get install ninja-build cmake
+
+cmake -G Ninja .  -B build # if you want to use your compiler add -DCMAKE_CXX_COMPILER={path_to_compiler}
+
+# if you want to build in parallel:
+# for fish
+cmake --build build --parallel -j(nproc)
+# for bash $(nproc)
+```
+
+How to compile bin files for simulation:
 ```shell
 riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 --static -Wl,-emain riscv-examples/src/fib.cc
 riscv64-linux-gnu-objdump -M no-aliases -M numeric -d

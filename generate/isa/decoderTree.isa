@@ -53,14 +53,27 @@ decode(0-1) {
                 b110: LWU
         }
 
-        b11100: decode(25-31) {
+        b11100: decode(12-14) {
+                b001: CSRRW
+                b010: CSRRS
+                b011: CSRRC
+                b101: CSRRWI
+                b110: CSRRSI
+                b111: CSRRCI
+
+                b000: decode(15-24) {
+                        b0000100000: EBREAK
+                        b0000000000: ECALL
+                        b0001000000: MRET
+
+                }
+
+                b100: decode(25-31) {
                     b0110110: HLV_D
                     b0110100: HLV_WU
                     b0110111: HSV_D
-                    b0000000: decode(20) {
-                                b1: EBREAK
-                                b0: ECALL
-                    }
+                }
+
         }
         
         b10100: decode(25-31) {

@@ -6,7 +6,7 @@ def parse_linux_syscalls(path):
         syscalls = f.readlines()
 
     syscall_start = None
-    syscalls_enum = dict()
+    syscalls_enum = []
     with open(path+'linux/unistd.h', 'r') as f:
         for line in f.readlines():
             m = re.search('#define __.+ ([0-9]+)', line)
@@ -21,7 +21,8 @@ def parse_linux_syscalls(path):
                 syscall = m.group(1).strip()
                 # a little fuction name preprocessing
                 syscall = re.sub('^compat_', '', syscall)
-                # syscall = re.sub('^sys_', '', syscall)
+                syscall = re.sub('^sys_', '', syscall)
+                # print(syscall)
                 # find syscall declaration and print it out
                 definitions = [s for s in syscalls if f'{syscall}(' in s]
                 if len(definitions) == 0:
@@ -29,10 +30,9 @@ def parse_linux_syscalls(path):
                     syscall_start = None
                     continue
                 # print(f'{syscall_start}"{syscall}","{definitions[0].strip()}")')
-                syscalls_enum[syscall] = re.findall('[0-9]+',syscall_start)[-1]
+                # syscalls_enum[syscall] = re.findall('[0-9]+',syscall_start)[-1]
+                syscalls_enum.append([syscall, re.findall('[0-9]+',syscall_start)[-1]])
                 syscall_start = None
-
-    # print(syscalls_enum)
     return(syscalls_enum)
 
 def parse_yaml(file_path):

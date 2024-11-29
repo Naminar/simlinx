@@ -18,7 +18,7 @@ namespace simlinx {
         std::cout << "PC = " << std::hex << pc_reg << " " << std::dec;
         decode(decodedBits, inst);
         if (inst.instrId == InstrId::NONE) {
-          std::cout << std::dec << " | InstrId = " << inst.instrId << std::endl;
+          std::cout << std::dec << " | InstrId = NONE" << std::endl;
           std::cout << "reg[10] " << regs[10] << "| reg[11] " << regs[11]
                     << std::endl;
           int x = 0;

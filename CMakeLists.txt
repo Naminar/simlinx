@@ -15,10 +15,8 @@ if (NOT DEFINED LIEF_DIR)
   set(LIEF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/LIEF/lib/cmake/LIEF)
 endif()
 
-execute_process(
-  COMMAND python3 generate/generator.py
-  COMMAND python3 generate/syscall/sysGen.py
-)
+execute_process(COMMAND python3 generate/generator.py)
+execute_process(COMMAND python3 generate/syscall/sysGen.py)
 
 include_directories(include)
 add_subdirectory(src)

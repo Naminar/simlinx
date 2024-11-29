@@ -1,4 +1,4 @@
-- name: sys_write
+- name: write
   args: [fd, buf, count]
   do: |
     char* buf = (char*) core.regs[Core::Register::a1];
@@ -8,7 +8,7 @@
     }
     putchar('\n');
 
-- name: sys_exit
+- name: exit
   args: []
   do: |
     if (core.regs[Core::Register::a0])

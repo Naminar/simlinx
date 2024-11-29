@@ -1,56 +1,8 @@
 from jinja2 import Template
-from sysParser import parse_linux_syscalls, parse_yaml
+from generate.syscall.sysParser import parse_linux_syscalls, parse_yaml
 from termcolor import colored
 import os
 import subprocess
-
-template_cc = Template("""
-#include "syscall/syscall.gen.hh"
-
-namespace Syscall {
-{% for syscall in syscalls %}
-// {{ syscall.enum}}
-// args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
-void {{ syscall.name }}(
-
-{%- if syscall.name == 'not_implemented_syscall' -%}
-    [[maybe_unused]] 
-{%- endif -%}
-
-Core& core) {
-{{ syscall.do | indent(4) }}
-    return; 
-}
-{% endfor %}
-
-std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
-{% for key, value in sys_enum_dict.items() %}
-  {{ value }}{{ ", " if not loop.last else "" }}
-{%- endfor -%}
-{% if true -%}\n{%- endif %}
-};                       
-                       
-}
-""")
-
-template_hh = Template("""
-#pragma once
-#include <functional>
-#include <stdint.h>
-#include <stdio.h>
-#include "cpu/core.hh"
-
-namespace Syscall {
-using simlinx::Core;
-
-{% for syscall in syscalls %}
-void {{ syscall.name }}(Core&);
-{% endfor %}
-
-using SyscallFunctionType = std::function<void(Core&)>;
-extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
-}
-""")
 
 def runcmd(cmd, verbose = False, *args, **kwargs):
 
@@ -67,55 +19,102 @@ def runcmd(cmd, verbose = False, *args, **kwargs):
     pass
 
 
-
-path = os.getcwd()
-if 'simlinx' in path:
-    path = path.split('simlinx')[0]
-    path += 'simlinx/'
-else:
-    print(colored('simlinx directory not found', 'red'))
-    exit()
-
-if not os.path.exists(path + 'generate/syscall/linux'):
-    print(colored('Director was not found, createing simlinx/generate/syscall/linux', 'yellow'))
-    os.makedirs(path + 'generate/syscall/linux')
-
-if not os.path.exists(path + 'generate/syscall/linux/syscalls.h'): 
-    runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/linux/syscalls.h', verbose = True)
-
-if not os.path.exists(path + 'generate/syscall/linux/unistd.h'): 
-    runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/uapi/asm-generic/unistd.h', verbose=True)
-
-syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
-# print(syscalls)
-
-sys_enum = parse_linux_syscalls(path+'generate/syscall/')
-sys_enum_int_list = list(sys_enum.values())
-sys_enum_dict = {}
-for i in range(len(sys_enum_int_list)):
-    sys_enum_dict[sys_enum_int_list[i]] = 'not_implemented_syscall'
-    sys_enum_int_list[i] = int(sys_enum_int_list[i])
-max_sys_enum = max(sys_enum_int_list) + 1
-
-for syscall in syscalls:
-    if syscall['name'] != 'not_implemented_syscall':
-        syscall['enum'] = sys_enum[syscall['name']]
-        sys_enum_dict[sys_enum[syscall['name']]] = syscall['name']
+def find_simlinx_dir():
+    path = os.getcwd()
+    if 'simlinx' in path:
+        path = path.split('simlinx')[0]
+        path += 'simlinx/'
     else:
-        syscall['enum'] = 'not implemented'
+        print(colored('simlinx directory not found', 'red'))
+        exit()
+    return path
 
-output = template_cc.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum)
-print(output)
+if __name__ == "__main__":
+    template_cc = Template("""
+    #include "syscall/syscall.gen.hh"
 
+    namespace Syscall {
+    {% for syscall in syscalls %}
+    // {{ syscall.enum}}
+    // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
+    void {{ syscall.name }}(
 
-if not os.path.exists(path + 'src/syscall'):
-    print(colored('Director was not found, createing simlinx/src/syscall', 'yellow'))
-    os.makedirs(path + 'src/syscall')
-with open(path + 'src/syscall/syscall.gen.cc', 'w', encoding='utf-8') as f:
-    f.write(output)
+    {%- if syscall.name == 'not_implemented_syscall' -%}
+        [[maybe_unused]] 
+    {%- endif -%}
 
-if not os.path.exists(path + 'include/syscall'):
-    print(colored('Director was not found, createing simlinx/include/syscall', 'yellow'))
-    os.makedirs(path + 'include/syscall')
-with open(path + 'include/syscall/syscall.gen.hh', 'w', encoding='utf-8') as f:
-    f.write(template_hh.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum))
+    Core& core) {
+    {{ syscall.do | indent(4) }}
+        return; 
+    }
+    {% endfor %}
+
+    std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
+    {% for _ in enum_range %}
+    {% if _ not in sys_enum_dict.keys() %}
+    not_implemented_syscall{{ ", " if not loop.last else "" }}{% else %}
+    {{ sys_enum_dict[_] }}{{ ", " if not loop.last else "" }}{% endif %}
+    {%- endfor -%}
+    {% if true -%}\n{%- endif %}
+    };                       
+    }
+    """)
+
+    template_hh = Template("""
+    #pragma once
+    #include <functional>
+    #include <stdint.h>
+    #include <stdio.h>
+    #include "cpu/core.hh"
+
+    namespace Syscall {
+    using simlinx::Core;
+
+    {% for syscall in syscalls %}
+    void {{ syscall.name }}(Core&);
+    {% endfor %}
+
+    using SyscallFunctionType = std::function<void(Core&)>;
+    extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
+    }
+    """)
+
+    path = find_simlinx_dir()
+
+    if not os.path.exists(path + 'generate/syscall/linux'):
+        print(colored('Director was not found, createing simlinx/generate/syscall/linux', 'yellow'))
+        os.makedirs(path + 'generate/syscall/linux')
+
+    if not os.path.exists(path + 'generate/syscall/linux/syscalls.h'): 
+        runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/linux/syscalls.h', verbose = True)
+
+    if not os.path.exists(path + 'generate/syscall/linux/unistd.h'): 
+        runcmd(f'cd {path+'generate/syscall/linux'}; wget https://raw.githubusercontent.com/torvalds/linux/refs/heads/master/include/uapi/asm-generic/unistd.h', verbose=True)
+
+    syscalls=parse_yaml(path+'generate/syscall/syscalls.yaml')
+    sys_enum = parse_linux_syscalls(path+'generate/syscall/')
+    sys_enum_int_list = [sys[1] for sys in sys_enum]
+    sys_enum_dict = {}
+    for i in range(len(sys_enum_int_list)):
+        sys_enum_int_list[i] = int(sys_enum_int_list[i])
+    max_sys_enum = max(sys_enum_int_list) + 1
+
+    for syscall in syscalls:
+        if syscall['name'] != 'not_implemented_syscall':
+            syscall['enum'] = [sys for sys in sys_enum if sys[0] == syscall['name']][0][1]
+            sys_enum_dict[syscall['enum']] = syscall['name']
+        else:
+            syscall['enum'] = 'not implemented'
+    output = template_cc.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum, enum_range=[str(_) for _ in range(max_sys_enum)])
+
+    if not os.path.exists(path + 'src/syscall'):
+        print(colored('Director was not found, createing simlinx/src/syscall', 'yellow'))
+        os.makedirs(path + 'src/syscall')
+    with open(path + 'src/syscall/syscall.gen.cc', 'w', encoding='utf-8') as f:
+        f.write(output)
+
+    if not os.path.exists(path + 'include/syscall'):
+        print(colored('Director was not found, createing simlinx/include/syscall', 'yellow'))
+        os.makedirs(path + 'include/syscall')
+    with open(path + 'include/syscall/syscall.gen.hh', 'w', encoding='utf-8') as f:
+        f.write(template_hh.render(syscalls=syscalls, sys_enum_dict=sys_enum_dict, max_sys_enum=max_sys_enum))
