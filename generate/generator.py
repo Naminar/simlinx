@@ -26,7 +26,7 @@ class Generator:
         self.enum = []
 
         self.handler = tmph.YamlHandler()
-        self.handler.get_impl_set(['generate/isa/execDecodeRvZicsr.isa.yaml', 'generate/isa/execDecode.isa.yaml'])
+        self.handler.get_impl_set(['generate/isa/execDecodeRvZicsr.isa.yaml', 'generate/isa/execDecode.isa.yaml', 'generate/isa/m.isa.yaml'])
         self.impl_instr = self.handler.get_impl_names()
 
 
