@@ -355,11 +355,7 @@
 - instruction: ecall
   decode: |
   execute: |
-<<<<<<< HEAD
     return ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
-=======
-    ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
->>>>>>> master
 
 
 - instruction: ebreak
@@ -387,11 +383,7 @@
 
 - instruction: slli
   decode: |
-<<<<<<< HEAD
     decodedInstr.imm = IMM6; // RV64 mode
-=======
-    decodedInstr.imm = IMM5;
->>>>>>> master
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
