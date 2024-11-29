@@ -194,6 +194,17 @@ decode(0-1) {
                 b101: SRA
                 b000: SUB
             }
+
+            b0000001: decode(12-14) {
+                b00: MUL
+                b001: MULH
+                b010: MULHSU
+                b011: MULHU
+                b100: DIV
+                b101: DIVU
+                b110: REM
+                b111: REMU
+            }
         }
 
         b00110: decode(12-14) {
