@@ -1,4 +1,4 @@
-#include "builder.hh"
+#include "sv39.hh"
 
 inline Sv39PageTableBuilder::Addr Sv39PageTableBuilder::NormalizeVPN(Addr vpn) {
   return vpn & ((1ULL << 27) - 1);
@@ -6,6 +6,14 @@ inline Sv39PageTableBuilder::Addr Sv39PageTableBuilder::NormalizeVPN(Addr vpn) {
 
 inline Sv39PageTableBuilder::Addr Sv39PageTableBuilder::NormalizePPN(Addr ppn) {
   return ppn & ((1ULL << 44) - 1);
+}
+
+void Sv39PageTableBuilder::SetRootPPN(Addr ppn) {
+  ppn = NormalizePPN(ppn);
+  Reg satp;
+  asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
+  satp |= ppn;
+  asm("csrrw x0, satp, %[value]" ::[value] "r"(satp)); // write satp
 }
 
 void Sv39PageTableBuilder::FirstLevelPtCnfg(Addr vpn, Addr ppn,
@@ -66,5 +74,12 @@ void Sv39PageTableBuilder::EnableTranslation() {
   uint32_t satp;
   asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
   satp |= (0b1000ULL << 60);
+  asm("csrrw x0, satp, %[value]" ::[value] "r"(satp)); // write satp
+}
+
+void Sv39PageTableBuilder::DisableTranslation() {
+  Reg satp;
+  asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
+  satp &= ((1ULL << 60) - 1);
   asm("csrrw x0, satp, %[value]" ::[value] "r"(satp)); // write satp
 }
