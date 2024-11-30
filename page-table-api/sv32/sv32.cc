@@ -25,10 +25,9 @@ void Sv32PageTableBuilder::FirstLevelPtCnfg(Addr vpn, Addr ppn,
   ppn = NormalizePPN(ppn);
 
   Reg satp;
-  Addr *first_level_pte;                          // should be 34bit
+  Addr *first_level_pte;                              // should be 34bit
   asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
-  first_level_pte =
-      (Addr *)(((satp & saptMaskPPN) << 12) + ((vpn >> 10)) << 2);
+  first_level_pte = (Addr *)(((satp & saptMaskPPN) << 12) + ((vpn >> 10)) << 2);
   *first_level_pte = (ppn << 10) | (0b1111 << 4) | (pte_type << 1) | 0b1;
 }
 
@@ -40,15 +39,14 @@ void Sv32PageTableBuilder::SecondLevelPtCnfg(Addr vpn, Addr ppn,
   ppn = NormalizePPN(ppn);
 
   Reg satp;
-  Addr *first_level_pte;                          // should be 34bit
-  Addr *second_level_pte;                         // should be 34bit
+  Addr *first_level_pte;                              // should be 34bit
+  Addr *second_level_pte;                             // should be 34bit
   asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
-  first_level_pte =
-      (Addr *)(((satp & saptMaskPPN) << 12) + ((vpn >> 10)) << 2);
+  first_level_pte = (Addr *)(((satp & saptMaskPPN) << 12) + ((vpn >> 10)) << 2);
   if (((*first_level_pte >> 1) & 0b111) != NextLevel)
     return;
-  second_level_pte = (Addr *)(((*first_level_pte & 0xfffffc00) << 2) +
-                                  ((vpn & 0x3ff) << 2));
+  second_level_pte =
+      (Addr *)(((*first_level_pte & 0xfffffc00) << 2) + ((vpn & 0x3ff) << 2));
   *second_level_pte = (ppn << 10) | (0b1111 << 4) | (pte_type << 1) | 0b1;
 }
 

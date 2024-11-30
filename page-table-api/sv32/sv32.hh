@@ -7,8 +7,8 @@
 class Sv32PageTableBuilder {
 public:
   using Addr = uint32_t;
-  using Reg  = uint32_t;
-  
+  using Reg = uint32_t;
+
   uint32_t page_offset = 12;
   Addr saptMaskPPN = 0x003fffff;
 
@@ -18,8 +18,8 @@ public:
   void EnableTranslation();
   void DisableTranslation();
   void SetRootPPN(Addr ppn);
-  
-  private:
+
+private:
   inline Addr NormalizeVPN(Addr vpn);
   inline Addr NormalizePPN(Addr ppn);
 };
