@@ -2,7 +2,7 @@
 #include <LIEF/ELF.hpp>
 #include <exception>
 #include <iostream>
-#include <print>
+#include <chrono>
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/bin_to_hex.h"
 
@@ -32,7 +32,11 @@ int main(int argc, char const *argv[]) try {
   }
 
   SPDLOG_DEBUG("Entry point: {}", binary->entrypoint());
+  auto start = std::chrono::high_resolution_clock::now();
   cpu.run(binary->entrypoint());
+  auto end = std::chrono::high_resolution_clock::now();
+  auto time = std::chrono::duration_cast<std::chrono::duration<float>>(end - start);
+  std::cout << "Execute time = " << time.count() << " seconds" << std::endl;
 }
 
 catch (std::exception &exc) {

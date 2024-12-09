@@ -48,10 +48,12 @@ namespace simlinx {
       }
     }
 
-    constexpr byte &operator[](size_type addr) { return raw_ram[addr]; }
+    constexpr byte &operator[](size_type addr) { 
+      return raw_ram[addr]; 
+    }
 
     constexpr byte operator[](size_type addr) const {
-      return const_cast<const RAM *>(this)->operator[](addr);
+      return const_cast<RAM *>(this)->operator[](addr);
     }
   };
 } // namespace simlinx

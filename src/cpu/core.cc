@@ -1,59 +1,41 @@
 #include "cpu/cpu.hh"
 #include "cpu/execute.gen.hh"
 #include <bitset>
-#include <iostream>
-#include <print>
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/bin_to_hex.h"
 
 namespace simlinx {
 
   void Core::run(Core::reg_t pc) {
     pc_reg = pc;
     regs[2] = 900_KB;
-    while (true)
-      try {
-        regs[0] = 0;
-        auto prev_pc = pc_reg;
-        ISA::BasedInstruction inst;
-        auto decodedBits = mem.load<uint32_t>(pc_reg);
-        SPDLOG_DEBUG("PC = {:#x}", pc_reg);
+    while (true) {
+      regs[0] = 0;
+      auto prev_pc = pc_reg;
+      ISA::BasedInstruction inst;
+      auto decodedBits = mem.load<uint32_t>(pc_reg);
+      SPDLOG_DEBUG("PC = {:#x}", pc_reg);
 
-        decode(decodedBits, inst);
-        if (inst.instrId == InstrId::NONE) {
-          std::cout << std::dec << " | InstrId = " << inst.instrId << std::endl;
-          std::cout << "reg[10] " << regs[10] << "| reg[11] " << regs[11]
-                    << std::endl;
-          int x = 0;
-          for (auto reg : regs) {
-            std::cout << "reg [" << x << "] " << reg << std::endl;
-            x += 1;
-          }
-          return;
+      decode(decodedBits, inst);
+      if (inst.instrId == InstrId::NONE) {
+        SPDLOG_DEBUG("InstrID = {}", static_cast<int>(inst.instrId));
+        for (auto i = 0uz; i < regs.size(); ++i) {
+          SPDLOG_DEBUG("Reg[{}] = {}", i, regs[i]);
         }
-
-        try {
-          auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
-          if (fault != Fault::NO_FAULT) {
-            std::cout << "fault = " << fault << std::endl;
-            return;
-          }
-        } catch (std::exception &e) {
-          std::println("executeFunctions exception! PC = {}", pc_reg);
-          std::println("{}", e.what());
-          return;
-        }
-
-        if (pc_reg == prev_pc)
-          pc_reg += sizeof(uint32_t);
-        else {
-          SPDLOG_DEBUG("jump");
-        }
-      }
-
-      catch (std::exception &e) {
-        std::println("load PC = {}", pc_reg);
-        std::println("{}", e.what());
         return;
       }
+
+      auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
+      if (fault != Fault::NO_FAULT) {
+        SPDLOG_DEBUG("Fault: {}", static_cast<int>(fault));
+        return;
+      }
+
+      if (pc_reg == prev_pc)
+        pc_reg += sizeof(uint32_t);
+      else {
+        SPDLOG_DEBUG("jump");
+      }
+    }
   };
 } // namespace simlinx
