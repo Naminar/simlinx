@@ -5,7 +5,7 @@
 #include <cstdint>
 
 namespace simlinx {
-
+  struct Core;
   class MMU {
   private:
     TLB tlbR;

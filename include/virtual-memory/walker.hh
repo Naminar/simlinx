@@ -2,7 +2,6 @@
 #pragma once
 
 #include "virtual-memory/bitUnion.hh"
-#include "virtual-memory/mmu.hh"
 #include "virtual-memory/tlb.hh"
 #include <cstdint>
 

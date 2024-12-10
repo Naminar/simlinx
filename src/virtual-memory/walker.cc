@@ -31,12 +31,12 @@ namespace simlinx {
       PTEAddr = a + ((va >> shift) & ((1U << 9) - 1)) * PTESize;
       // !!!! pte = core.mem.raw_load<uint64_t>(PTEAddr);
 
-      if ((pte & vbit) == 0)
-        ;
+      // if ((pte & vbit) == 0)
+      //   ;
       // throw PageFaultException("Page fault (invalid).\n", pte, pte_addr);
 
-      if (((pte & rbit) == 0) && ((pte & wbit) == wbit))
-        ;
+      // if (((pte & rbit) == 0) && ((pte & wbit) == wbit))
+      //   ;
       // throw PageFaultException("Page fault (W, but not R).\n", pte,
       // pte_addr);
 
@@ -44,17 +44,17 @@ namespace simlinx {
         break;
 
       i = i - 1;
-      if (i < 0)
-        ;
+      // if (i < 0)
+      //   ;
       // throw PageFaultException("Page fault (i<0).\n", pte, pte_addr);
 
       a = (pte >> 10) * pageSize;
     }
 
-    if ((mode == MemoryMode::READ && (pte & rbit) == 0) ||
-        (mode == MemoryMode::WRITE && (pte & wbit) == 0) ||
-        (mode == MemoryMode::EXEC && (pte & xbit) == 0))
-      ;
+    // if ((mode == MemoryMode::READ && (pte & rbit) == 0) ||
+    //     (mode == MemoryMode::WRITE && (pte & wbit) == 0) ||
+    //     (mode == MemoryMode::EXEC && (pte & xbit) == 0))
+    //   ;
     // throw PageFaultException("Page fault (access type).\n", pte, pte_addr);
 
     // if((i > 0) && (((pte >> 10) & 0x3ff) != 0))
