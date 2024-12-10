@@ -2,6 +2,7 @@
 #include "cpu/instruction.hh"
 #include "ram/ram.hh"
 #include "reg-file/csrRegFile.hh"
+#include "virtual-memory/mmu.hh"
 #include <array>
 #include <cstdint>
 
@@ -15,11 +16,12 @@ namespace simlinx {
     std::array<reg_t, 32> regs;
     reg_t pc_reg = 0U;
     RAM &mem;
+    MMU mmu;
 
   public:
     void run(reg_t pc);
     void decode(uint32_t decodedBits, ISA::BasedInstruction &decodedInstr);
-    Core(RAM &ram) : mem(ram){};
+    Core(RAM &ram) : mem(ram), mmu(*this) {};
 
     enum Register {
       zero = 0,
