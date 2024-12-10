@@ -2,8 +2,6 @@
 #include "mmu.hh"
 #include "walker.hh"
 
-
-
 namespace simlinx {
 
     uint64_t PageWalker::walk(Addr va, MemoryMode mode) {

@@ -7,8 +7,8 @@
 #include <iostream>
 #include <type_traits>
 
-#define SIM_BLUE_BCK "\033[44;37m" // ANSI escape code for blue background
-#define SIM_RESET_COLOR "\033[0m"  // ANSI escape code to reset color
+#define SIM_BLUE_BCK " " //"\033[44;37m" // ANSI escape code for blue background
+#define SIM_RESET_COLOR " " //"\033[0m"  // ANSI escape code to reset color
 
 template <size_t left_border, size_t right_border>
 constexpr bool checkBorders() {
@@ -69,8 +69,4 @@ public:
     union {                                                                    \
       storageT storage = 0;
 
-#define endBitUnion                                                            \
-  }                                                                            \
-  ;                                                                            \
-  }                                                                            \
-  ;
+#define endBitUnion };};
