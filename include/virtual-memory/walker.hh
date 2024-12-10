@@ -35,7 +35,7 @@ namespace simlinx {
 
   public:
     PageWalker(Core &_core, MMU &_mmu) : core(_core), mmu(_mmu),
-    rootAddr((_core.CSRs[CSRRegister::satp] & ((1U << 44) - 1)) * pageSize){
+    rootAddr((_core.CSRs[CSRRegister::satp] & ((1ULL << 44) - 1)) * pageSize){
     };
 
     uint64_t walk(Addr va, MemoryMode mode);

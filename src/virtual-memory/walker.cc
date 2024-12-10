@@ -1,6 +1,5 @@
-#pragma once
-#include "mmu.hh"
-#include "walker.hh"
+#include "virtual-memory/mmu.hh"
+#include "virtual-memory/walker.hh"
 
 namespace simlinx {
     uint64_t PageWalker::walk(Addr va, MemoryMode mode) {

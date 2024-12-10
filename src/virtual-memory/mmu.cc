@@ -1,6 +1,7 @@
 
 #include "virtual-memory/mmu.hh"
 
+
 Addr simlinx::MMU::translate(Addr va, MemoryMode mode) {
   std::optional<Addr> pa;
   if (core.CSRs[CSRRegister::satp] >> 60 == 8U) {
