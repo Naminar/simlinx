@@ -3,7 +3,6 @@
 #include "walker.hh"
 
 namespace simlinx {
-
     uint64_t PageWalker::walk(Addr va, MemoryMode mode) {
       uint64_t a = rootAddr;
       int i = levels - 1;
