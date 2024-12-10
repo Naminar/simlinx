@@ -69,4 +69,8 @@ public:
     union {                                                                    \
       storageT storage = 0;
 
-#define endBitUnion };};
+#define endBitUnion                                                            \
+  }                                                                            \
+  ;                                                                            \
+  }                                                                            \
+  ;
