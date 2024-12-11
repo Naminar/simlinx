@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "cpu/fault.hh"
 #include "virtual-memory/bitUnion.hh"
 #include "virtual-memory/tlb.hh"
 #include <cstdint>
@@ -38,7 +39,7 @@ namespace simlinx {
     // pageSize){
     // };
 
-    uint64_t walk(Addr va, MemoryMode mode);
+    PageFault walk(Addr va, Addr *pa, MemoryMode mode);
   };
 
 } // namespace simlinx

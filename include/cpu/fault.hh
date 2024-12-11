@@ -8,3 +8,12 @@ enum class Fault {
   STORE_ACCESS_FAULT,
   THE_END_OF_TASK
 };
+
+enum class PageFault {
+  NoFault,
+  InvalidPage,
+  WButNotR,
+  ILessThenZero,
+  AccessType,
+  SuperPage
+};

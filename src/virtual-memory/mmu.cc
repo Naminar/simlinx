@@ -23,7 +23,10 @@ namespace simlinx {
       if (pa.has_value()) {
         return pa.value();
       } else {
-        pa = walker.walk(va, mode);
+        Addr walk_pa;
+        PageFault fault = walker.walk(va, &walk_pa, mode);
+        assert(fault == PageFault::NoFault);
+        return walk_pa;
       }
     } else
       assert(false);
