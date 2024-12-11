@@ -15,5 +15,7 @@ enum class PageFault {
   WButNotR,
   ILessThenZero,
   AccessType,
+  AccessBit,
+  DirtyBit,
   SuperPage
 };

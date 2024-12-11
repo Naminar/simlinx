@@ -53,16 +53,13 @@ namespace simlinx {
       return PageFault::AccessType;
 
     // if((i > 0) && (((pte >> 10) & 0x3ff) != 0))
-    // 	throw PageFaultException("Page fault (superpage).\n", pte,
-    // pte_addr);
+    // return PageFault::SuperPage;
 
-    // if((pte & A_bit) == 0)
-    // 	throw PageFaultException("Page fault (access bit).\n", pte,
-    // pte_addr);
+    if ((pte & abit) == 0)
+      return PageFault::AccessBit;
 
-    // if((access == WRITE) && ((pte & D_bit) == 0))
-    // 	throw PageFaultException("Page fault (dirty bit).\n", pte,
-    // pte_addr);
+    if ((mode == MemoryMode::WRITE) && ((pte & dbit) == 0))
+      return PageFault::DirtyBit;
 
     *pa = ((pte << 2) & ~((1U << 12) - 1)) | (va & ((1U << 12) - 1));
     // if(i > 0)
