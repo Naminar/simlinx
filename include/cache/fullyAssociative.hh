@@ -3,14 +3,14 @@
 #include <array>
 #include <cstdint>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 template <typename StorageT, uint64_t Size = 32, typename KeyT = uint64_t,
           uint64_t Alignas = 64>
 class FullyAssociativeCache : public Statistic {
 private:
   alignas(Alignas) std::array<StorageT, Size> alignedArray;
-  std::map<KeyT, uint64_t> indexes;
+  std::unordered_map<KeyT, uint64_t> indexes;
   uint64_t roundRobinInd = 0;
 
 public:

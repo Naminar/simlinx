@@ -7,14 +7,11 @@
 #include <iostream>
 #include <type_traits>
 
-#define SIM_BLUE_BCK " " //"\033[44;37m" // ANSI escape code for blue background
-#define SIM_RESET_COLOR " " //"\033[0m"  // ANSI escape code to reset color
-
 template <size_t left_border, size_t right_border>
 constexpr bool checkBorders() {
   static_assert(left_border >= right_border,
-                SIM_BLUE_BCK "Left border must be greater than or equal to the "
-                             "right border." SIM_RESET_COLOR);
+                "Left border must be greater than or equal to the "
+                "right border.");
   return true;
 }
 
