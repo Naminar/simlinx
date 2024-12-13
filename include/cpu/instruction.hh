@@ -88,39 +88,11 @@ namespace ISA {
     uint64_t csr = 0;
     uint64_t imm = 0;
 
-    void reset() {
-      instrBits = 0;
-      instrId = InstrId::NONE;
-
-      offset = 0;
-      rd = 0;
-      rs1 = 0;
-      rs2 = 0;
-      csr = 0;
-      imm = 0;
-    }
-    void matchBitsId(uint64_t bits, InstrId id) {
-      instrBits = bits;
-      instrId = id;
-    }
+    void reset();
+    void matchBitsId(uint64_t bits, InstrId id);
     template <bool enBinary = true, bool enHex = true, typename T = uint64_t>
-    void _dump(T param, const std::string &name) {
-      std::cout << name << " = " << std::dec << param;
-      if (enBinary)
-        std::cout << " | binary = " << std::bitset<sizeof(T) * 8>(param);
-      if (enHex)
-        std::cout << " | hex = " << std::hex << param << std::endl;
-      else
-        std::cout << std::endl;
-      std::cout << std::dec;
-    }
-    void dump() {
-      _dump(offset, "offset");
-      _dump(rd, "rd");
-      _dump(rs1, "rs1");
-      _dump(rs2, "rs2");
-      _dump(imm, "imm");
-    }
+    void _dump(T param, const std::string &name);
+    void dump();
   };
 
 } // end namespace ISA

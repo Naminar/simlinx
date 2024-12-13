@@ -66,8 +66,6 @@ public:
     union {                                                                    \
       storageT storage = 0;
 
-#define endBitUnion                                                            \
-  }                                                                            \
-  ;                                                                            \
-  }                                                                            \
-  ;
+// clang-format off
+#define endBitUnion };};
+// clang-format on
