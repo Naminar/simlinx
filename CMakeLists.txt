@@ -17,6 +17,7 @@ endif()
 
 execute_process(COMMAND python3 generate/generator.py)
 execute_process(COMMAND python3 generate/syscall/sysGen.py)
+execute_process(COMMAND python3 generate/autoClangFormat.py)
 
 include_directories(include)
 add_subdirectory(src)

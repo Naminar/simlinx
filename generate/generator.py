@@ -137,7 +137,7 @@ class Generator:
         self.handler.handle_execute()
         self.handler.handle_enum()
         self.handler.handle_bitfields()
-        make_clang_format()
+        # make_clang_format()
 
 
 if __name__ == '__main__':
