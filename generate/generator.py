@@ -115,6 +115,7 @@ class Generator:
     def make_decode_tree(self)->None:
         with open(self.cpuDirCC+'decodeTree.gen.cc', 'w', encoding='utf-8') as f:
             f.write(self.make_header('decodeTree', 'cpu'))
+            f.write(self.make_header('bitfields', 'cpu'))
             f.write(decoder_tree_header + self.out + '}\n')
             f.write(self.handler.handle_undef_bitfields())
 
@@ -123,8 +124,7 @@ class Generator:
         path = os.getcwd()
         include_str = '#pragma once\n'
         madeHeader = dirHH+f'/{file_name}.gen.hh'
-        # print(args)
-        for fileToInclude in ['core', 'bitfields.gen']:
+        for fileToInclude in ['core']:
             include_str = include_str+ f'#include "cpu/{fileToInclude}.hh"\n'
         open(path+'/../include/'+madeHeader, 'w', encoding='utf-8').write(include_str)
         return f'#include "{madeHeader}"\n'
