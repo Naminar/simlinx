@@ -62,3 +62,6 @@ namespace simlinx {
     };
   };
 } // namespace simlinx
+
+
+#include "cache/basicBlockCacheImpl.hh"

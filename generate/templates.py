@@ -1,36 +1,40 @@
 from jinja2 import Template
 
 execute_cc_tmpl = Template("""
-#include "cpu/execute.gen.hh"
+  #include "cpu/execute.gen.hh"
+  #include "cpu/core.hh"
 
-namespace ISA {
- using reg_t = uint64_t;
+  namespace simlinx {
+    struct Core;
+  }
 
-{% for instruction in implInstrSet %}
-Fault execute{{ instruction.instruction }}({{ instruction.unusedCore }}simlinx::Core& core, {{ instruction.unusedBasedInstr }}ISA::BasedInstruction& instr) {
-  {{ instruction.execute | indent(2)}}
-  {% if instruction.isEBB %} instr.setEBB();{% endif %}
-  return Fault::NO_FAULT;
-};
-{% endfor %}
-}
+  namespace ISA {
+    using reg_t = uint64_t;
+
+    {% for instruction in implInstrSet %}
+    Fault execute{{ instruction.instruction }}({{ instruction.unusedCore }}simlinx::Core& core, {{ instruction.unusedBasedInstr }}ISA::BasedInstruction& instr) {
+      {{ instruction.execute | indent(2)}}
+      {% if instruction.isEBB %} instr.setEBB();{% endif %}
+      return Fault::NO_FAULT;
+    };
+    {% endfor %}
+  }
 """)
 
 execute_hh_tmpl = Template("""
-#pragma once
-#include "cpu/fault.hh"
-#include "cpu/core.hh"
-#include "cpu/instruction.hh"
-#include "syscall/syscall.gen.hh"
-namespace ISA {
-{% for instruction in implInstrSet %}
-Fault execute{{  instruction.instruction }}(simlinx::Core& core, ISA::BasedInstruction& instr);
-{% endfor %}
+  #pragma once
+  #include "cpu/fault.hh"
+  #include "cpu/instruction.hh"
+  #include "syscall/syscall.gen.hh"
+  namespace ISA {
+    {% for instruction in implInstrSet %}
+    Fault execute{{ instruction.instruction }}(simlinx::Core& core, ISA::BasedInstruction& instr);
+    {% endfor %}
 
-static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {{ implInstrSet|length }}> executeFunctions = { 
-{% for instruction in implInstrSet %}  &execute{{ instruction.instruction }}{{ ", " if not loop.last else ""}}
-{% endfor %}};
-}
+    static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {{ implInstrSet|length }}> executeFunctions = { 
+    {% for instruction in implInstrSet %}  &execute{{ instruction.instruction }}{{ ", " if not loop.last else ""}}
+    {% endfor %}};
+  }
 """)
 
 enum_hh_tmpl = Template("""

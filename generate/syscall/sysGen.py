@@ -31,53 +31,57 @@ def find_simlinx_dir():
 
 if __name__ == "__main__":
     template_cc = Template("""
-    #include "syscall/syscall.gen.hh"
+        #include "syscall/syscall.gen.hh"
+        #include "cpu/core.hh"
 
-    namespace Syscall {
-    {% for syscall in syscalls %}
-    // {{ syscall.enum}}
-    // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
-    Fault {{ syscall.name }}(
+        namespace Syscall {
+            {% for syscall in syscalls %}
+            // {{ syscall.enum}}
+            // args [{% for i in range(syscall.args|length) %} a{{ i }} {{ syscall.args[i] }}{{ ", " if not loop.last else "" }}{% endfor %}]
+            Fault {{ syscall.name }}(
 
-    {%- if syscall.name == 'not_implemented_syscall' -%}
-        [[maybe_unused]] 
-    {%- endif -%}
+            {%- if syscall.name == 'not_implemented_syscall' -%}
+                [[maybe_unused]] 
+            {%- endif -%}
 
-    Core& core) {
-    {{ syscall.do | indent(4) }}
-        return Fault::NO_FAULT;
-    }
-    {% endfor %}
+            Core& core) {
+            {{ syscall.do | indent(4) }}
+                return Fault::NO_FAULT;
+            }
+            {% endfor %}
 
-    std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
-    {% for _ in enum_range %}
-    {% if _ not in sys_enum_dict.keys() %}
-    not_implemented_syscall{{ ", " if not loop.last else "" }}{% else %}
-    {{ sys_enum_dict[_] }}{{ ", " if not loop.last else "" }}{% endif %}
-    {%- endfor -%}
-    {% if true -%}\n{%- endif %}
-    };                       
-    }
+            std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls = {
+            {% for _ in enum_range %}
+            {% if _ not in sys_enum_dict.keys() %}
+            not_implemented_syscall{{ ", " if not loop.last else "" }}{% else %}
+            {{ sys_enum_dict[_] }}{{ ", " if not loop.last else "" }}{% endif %}
+            {%- endfor -%}
+            {% if true -%}\n{%- endif %}
+            };                       
+        }
     """)
 
     template_hh = Template("""
-    #pragma once
-    #include <functional>
-    #include <stdint.h>
-    #include <stdio.h>
-    #include "cpu/core.hh"
-    #include "cpu/fault.hh"
+        #pragma once
+        #include <functional>
+        #include <stdint.h>
+        #include <stdio.h>
+        #include "cpu/fault.hh"
 
-    namespace Syscall {
-    using simlinx::Core;
+        namespace simlinx {
+            struct Core;
+        }
 
-    {% for syscall in syscalls %}
-    Fault {{ syscall.name }}(Core&);
-    {% endfor %}
+        namespace Syscall {
+            using simlinx::Core;
 
-    using SyscallFunctionType = std::function<Fault(Core&)>;
-    extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
-    }
+            {% for syscall in syscalls %}
+            Fault {{ syscall.name }}(Core&);
+            {% endfor %}
+
+            using SyscallFunctionType = std::function<Fault(Core&)>;
+            extern std::array<SyscallFunctionType, {{ max_sys_enum }}> syscalls;
+        }
     """)
 
     path = find_simlinx_dir()
