@@ -1,4 +1,5 @@
 #pragma once
+#include "cache/basicBlockCache.hh"
 #include "cpu/instruction.hh"
 #include "ram/ram.hh"
 #include "reg-file/csrRegFile.hh"
@@ -17,6 +18,7 @@ namespace simlinx {
     reg_t pc_reg = 0U;
     RAM &mem;
     MMU mmu;
+    BasicBlockCache icache;
 
   public:
     void run(reg_t pc);
