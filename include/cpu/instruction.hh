@@ -73,11 +73,17 @@ namespace ISA {
   }
 
   class BasedInstruction {
+  private:
+    bool _isEBB = false;
+
   public:
     uint64_t instrBits;
 
     // for array of exec functions
     InstrId instrId;
+    // end of basic block
+    void setEBB() { _isEBB = true; };
+    inline bool isEBB() const { return _isEBB; };
 
     // instruction's operands
   public:

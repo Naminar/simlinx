@@ -9,6 +9,7 @@ namespace ISA {
 {% for instruction in implInstrSet %}
 Fault execute{{ instruction.instruction }}({{ instruction.unusedCore }}simlinx::Core& core, {{ instruction.unusedBasedInstr }}ISA::BasedInstruction& instr) {
   {{ instruction.execute | indent(2)}}
+  {% if instruction.isEBB %} instr.setEBB();{% endif %}
   return Fault::NO_FAULT;
 };
 {% endfor %}
@@ -35,7 +36,8 @@ static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {{ imp
 enum_hh_tmpl = Template("""
 enum InstrId {
 {% for instruction in implInstrSet %}{{ instruction.instruction.upper() }} = {{ loop.index0 }},
-{% endfor %}NONE
+{% endfor %} EBBC, //basic block end canary
+NONE
 };
 """)
 
