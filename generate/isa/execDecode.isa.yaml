@@ -116,7 +116,7 @@
     decodedInstr.imm = IMM12;
   execute: |
     core.regs[instr.rd] = sext<8>(
-                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0)
+                              bitsFrom(core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0)
                             );
 
 
@@ -127,7 +127,7 @@
     decodedInstr.imm = IMM12;
   execute: |
     core.regs[instr.rd] = sext<16>(
-                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0)
+                              bitsFrom(core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0)
                             );
 
 
@@ -138,7 +138,7 @@
     decodedInstr.imm = IMM12;
   execute: |
     core.regs[instr.rd] = sext<32>(
-                              bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 31, 0)
+                              bitsFrom(core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 31, 0)
                             );
 
 
@@ -148,7 +148,7 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   execute: |
-    core.regs[instr.rd] = core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
+    core.regs[instr.rd] = core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
 
 
 - instruction: lbu
@@ -157,7 +157,7 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   execute: |
-    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0);
+    core.regs[instr.rd] = bitsFrom(core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 7, 0);
 
 
 - instruction: lhu
@@ -166,7 +166,7 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   execute: |
-    core.regs[instr.rd] = bitsFrom(core.mem.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0);
+    core.regs[instr.rd] = bitsFrom(core.load<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm)), 15, 0);
 
 
 - instruction: sb
@@ -175,7 +175,7 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   execute: |
-    core.mem.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 7, 0));
+    core.store<uint8_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 7, 0));
 
 
 - instruction: sh
@@ -184,7 +184,7 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   execute: |
-    core.mem.store<uint16_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 15, 0));
+    core.store<uint16_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 15, 0));
 
 
 - instruction: sw
@@ -193,7 +193,7 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   execute: |
-    core.mem.store<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
+    core.store<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 31, 0));
 
 
 - instruction: sd
@@ -202,7 +202,7 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   execute: |
-    core.mem.store<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 63, 0));
+    core.store<uint64_t>(core.regs[instr.rs1] + sext<12>(instr.imm), bitsFrom(core.regs[instr.rs2], 63, 0));
 
 
 - instruction: addi
@@ -468,7 +468,7 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   execute: |
-    core.regs[instr.rd] = core.mem.load<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
+    core.regs[instr.rd] = core.load<uint32_t>(core.regs[instr.rs1] + sext<12>(instr.imm));
 
 
 - instruction: mret

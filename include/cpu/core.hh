@@ -58,5 +58,35 @@ namespace simlinx {
       t5 = 30,
       t6 = 31
     };
+
+  public:
+    template <std::unsigned_integral T> T load_physical(RAM::size_type addr) {
+      return mem.load<T>(addr);
+    }
+
+    template <std::unsigned_integral T> T load(RAM::size_type addr) {
+      auto memory_mode = (addr == pc_reg) ? MemoryMode::EXEC : MemoryMode::WRITE;
+      auto translated_addr = mmu.translate(addr, memory_mode);
+      return load_physical<T>(translated_addr);
+    }
+
+    void load_physical(RAM::size_type addr, std::unsigned_integral auto &value) {
+      mem.load(addr, value);
+    }
+
+    void load(RAM::size_type addr, std::unsigned_integral auto &value) {
+      auto memory_mode = (addr == pc_reg) ? MemoryMode::EXEC : MemoryMode::WRITE;
+      auto translated_addr = mmu.translate(addr, memory_mode);
+      load_physical(translated_addr, value);
+    }
+
+    void store_physical(RAM::size_type addr, std::unsigned_integral auto value) {
+      mem.store(addr, value);
+    }
+
+    void store(RAM::size_type addr, std::unsigned_integral auto value) {
+      auto translated_addr = mmu.translate(addr, MemoryMode::READ);
+      store_physical(translated_addr, value);
+    }
   };
 } // namespace simlinx
