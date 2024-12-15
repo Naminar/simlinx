@@ -2,10 +2,12 @@
 #include "cpu/core.hh"
 
 namespace simlinx {
-  void BasicBlockCache::createNewBlock(Core &core) {
+  BasicBlock<> *BasicBlockCache::createNewBlock(Core &core) {
     insert(BasicBlock<>(core, core.pc_reg), core.pc_reg);
+    return getLastInserted();
   }
-  void BasicBlockCache::createNewBlock(Core &core, uint64_t pc) {
+  BasicBlock<> *BasicBlockCache::createNewBlock(Core &core, uint64_t pc) {
     insert(BasicBlock<>(core, pc), pc);
+    return getLastInserted();
   }
 } // namespace simlinx

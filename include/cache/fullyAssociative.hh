@@ -46,6 +46,8 @@ public:
     return nullptr;
   }
 
+  inline StorageT *getLastInserted() { return &alignedArray[roundRobinInd]; }
+
   void dump() const {
     for (const auto &[key, val] : indexes) {
       alignedArray[val].dump();

@@ -23,9 +23,10 @@ namespace simlinx {
 
   class BasicBlockCache : public FullyAssociativeCache<BasicBlock<>> {
   public:
-    void createNewBlock(Core &core); // { insert(BasicBlock<>(core,
-                                     // core.pc_reg), core.pc_reg); }
-    void createNewBlock(Core &core,
-                        uint64_t pc); // { insert(BasicBlock<>(core, pc), pc); }
+    BasicBlock<> *createNewBlock(Core &core); // { insert(BasicBlock<>(core,
+                                              // core.pc_reg), core.pc_reg); }
+    BasicBlock<> *
+    createNewBlock(Core &core,
+                   uint64_t pc); // { insert(BasicBlock<>(core, pc), pc); }
   };
 } // namespace simlinx
