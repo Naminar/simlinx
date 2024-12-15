@@ -8,6 +8,10 @@
 #include <iostream>
 #include <vector>
 
+namespace simlinx {
+  class Core;
+}
+
 namespace ISA {
 
   inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
@@ -77,6 +81,8 @@ namespace ISA {
     bool _isEBB = false;
 
   public:
+    void (*exec)(simlinx::Core &core, BasedInstruction *bbsI,
+                 BasedInstruction *curI) = nullptr;
     uint64_t instrBits;
 
     // for array of exec functions

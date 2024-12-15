@@ -24,33 +24,23 @@ namespace simlinx {
     } while (instructionsItr < blockSize - 1 && !decodingInst.isEBB());
     // std::cout << "End of creating BasicBlock" << std::endl;
     decodingInst.instrId = InstrId::EBBC;
+    decodingInst.exec = executeEbbc;
     instructions[instructionsItr] = decodingInst;
   }
 
   template <uint32_t blockSize>
     requires(blockSize > 0)
   Fault BasicBlock<blockSize>::execute(Core &core) {
-    uint32_t instructionsItr = 0;
-    auto inst = instructions[instructionsItr];
-    /// TODO: maybe try and catch
+    auto inst = instructions[0];
     Fault fault = Fault::NO_FAULT;
-    decltype(core.pc_reg) prev_pc; // = core.pc_reg;
 
     if (inst.instrId == InstrId::NONE)
-      fault = Fault::THE_END_OF_TASK;
+      return Fault::THE_END_OF_TASK;
+    auto prev_pc = core.pc_reg;
+    instructions[0].exec(core, &instructions[0], &instructions[0]);
 
-    while (instructionsItr < blockSize && inst.instrId != InstrId::EBBC &&
-           fault == Fault::NO_FAULT) {
-      core.regs[0] = 0;
-      core.executedI++;
-      prev_pc = core.pc_reg;
-      fault = ISA::executeFunctions[inst.instrId](core, inst);
-      instructionsItr++;
-      inst = instructions[instructionsItr];
-
-      if (core.pc_reg == prev_pc)
-        core.pc_reg += sizeof(uint32_t);
-    }
+    if (core.fault != Fault::NO_FAULT)
+      fault = core.fault;
     return fault;
   }
 
@@ -58,8 +48,9 @@ namespace simlinx {
     requires(blockSize > 0)
   void BasicBlock<blockSize>::dump() const {
     std::cout << "BasicBlock:" << std::endl;
-    for (auto inst : instructions) {
-      std::cout << "Instruction:" << inst.instrId << std::endl;
+    for (uint32_t i = 0; i < blockSize; i++) {
+      std::cout << "Instruction:" << instructions[i].instrId
+                << " addr: " << &instructions[i] << std::endl;
     }
     std::cout << "End of BasicBlock" << std::endl;
   }

@@ -4,14 +4,14 @@
     decodedInstr.rd = RD;
     decodedInstr.csr = CSR;
   execute: |
-    if (core.regs[instr.rd] == 0) {
-        core.CSRs[instr.csr] = core.regs[instr.rs1];
-        return Fault::NO_FAULT;    
+    if (core.regs[rd] == 0) {
+        core.CSRs[csr] = core.regs[rs1];
+        //return Fault::NO_FAULT;    
     }
 
-    reg_t tmp = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = core.regs[instr.rs1];
-    core.regs[instr.rd] = tmp;
+    reg_t tmp = core.CSRs[csr];
+    core.CSRs[csr] = core.regs[rs1];
+    core.regs[rd] = tmp;
 
 
 - instruction: csrrs
@@ -20,9 +20,9 @@
     decodedInstr.rd = RD;
     decodedInstr.csr = CSR;
   execute: |
-    reg_t tmp = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = tmp | core.regs[instr.rs1];
-    core.regs[instr.rd] = tmp;
+    reg_t tmp = core.CSRs[csr];
+    core.CSRs[csr] = tmp | core.regs[rs1];
+    core.regs[rd] = tmp;
 
 
 - instruction: csrrc
@@ -31,9 +31,9 @@
     decodedInstr.rd = RD;
     decodedInstr.csr = CSR;
   execute: |
-    reg_t tmp = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = tmp & ~core.regs[instr.rs1];
-    core.regs[instr.rd] = tmp;
+    reg_t tmp = core.CSRs[csr];
+    core.CSRs[csr] = tmp & ~core.regs[rs1];
+    core.regs[rd] = tmp;
 
 
 - instruction: csrrwi
@@ -43,8 +43,8 @@
     decodedInstr.csr = CSR;
   execute: |
     /*if (isntr.rd != 0)*/
-    core.regs[instr.rd] = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = instr.imm;
+    core.regs[rd] = core.CSRs[csr];
+    core.CSRs[csr] = imm;
 
 
 - instruction: csrrsi
@@ -53,9 +53,9 @@
     decodedInstr.rd = RD;
     decodedInstr.csr = CSR;
   execute: |
-    reg_t tmp = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = tmp | instr.imm;
-    core.regs[instr.rd] = tmp;
+    reg_t tmp = core.CSRs[csr];
+    core.CSRs[csr] = tmp | imm;
+    core.regs[rd] = tmp;
 
 
 - instruction: csrrci
@@ -64,6 +64,6 @@
     decodedInstr.rd = RD;
     decodedInstr.csr = CSR;
   execute: |
-    reg_t tmp = core.CSRs[instr.csr];
-    core.CSRs[instr.csr] = tmp & ~instr.imm;
-    core.regs[instr.rd] = tmp;
+    reg_t tmp = core.CSRs[csr];
+    core.CSRs[csr] = tmp & ~imm;
+    core.regs[rd] = tmp;

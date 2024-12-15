@@ -10,14 +10,31 @@ execute_cc_tmpl = Template("""
 
   namespace ISA {
     using reg_t = uint64_t;
+    #define rs1 ((curI->rs1))
+    #define rs2 ((curI->rs2))
+    #define rd ((curI->rd))
+    #define csr ((curI->csr))
+    #define imm ((curI->imm))
 
     {% for instruction in implInstrSet %}
-    Fault execute{{ instruction.instruction }}({{ instruction.unusedCore }}simlinx::Core& core, {{ instruction.unusedBasedInstr }}ISA::BasedInstruction& instr) {
+    void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
+      {
+      {% if instruction.isEBB %} core.pc_reg += (curI-bbsI)*sizeof(uint32_t);  {% endif %}
       {{ instruction.execute | indent(2)}}
-      return Fault::NO_FAULT;
+      {% if not instruction.isEBB %} }(curI+1)->exec(core, bbsI, curI+1); {% else %} core.executedI += (curI-bbsI+1); } {% endif %}
     };
     {% endfor %}
-  }
+                           
+    void executeEbbc(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
+      core.pc_reg += (curI-bbsI)*sizeof(uint32_t);
+      core.executedI += (curI-bbsI);
+    }
+    #undef rs1
+    #undef rs2
+    #undef rd
+    #undef csr
+    #undef imm
+    }
 """)
 
 execute_hh_tmpl = Template("""
@@ -27,12 +44,15 @@ execute_hh_tmpl = Template("""
   #include "syscall/syscall.gen.hh"
   namespace ISA {
     {% for instruction in implInstrSet %}
-    Fault execute{{ instruction.instruction }}(simlinx::Core& core, ISA::BasedInstruction& instr);
+    void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI);
     {% endfor %}
 
-    static const std::array<Fault(*)(simlinx::Core&, ISA::BasedInstruction&), {{ implInstrSet|length }}> executeFunctions = { 
+    void executeEbbc(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI);
+    {#
+    static const std::array<void(*)(simlinx::Core&, BasedInstruction*, BasedInstruction*), {{ implInstrSet|length }}> executeFunctions = { 
     {% for instruction in implInstrSet %}  &execute{{ instruction.instruction }}{{ ", " if not loop.last else ""}}
     {% endfor %}};
+    #}
   }
 """)
 
@@ -48,6 +68,7 @@ NONE
 decoder_block_tmpl = Template(
 """{{' '*tab}}decodedInstr.matchBitsId(decodedBits, InstrId::{{ instr_id }});
 {{' '*tab}}{{ decode | indent(tab)}}
+decodedInstr.exec = {{'execute'+instr_id[0].upper()+instr_id[1:].lower()}};
 {% if isEBB %} decodedInstr.setEBB();{% endif %}
 """)
 

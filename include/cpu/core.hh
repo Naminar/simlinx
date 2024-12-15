@@ -1,5 +1,6 @@
 #pragma once
 #include "cache/basicBlockCache.hh"
+#include "cpu/fault.hh"
 #include "cpu/instruction.hh"
 #include "ram/ram.hh"
 #include "reg-file/csrRegFile.hh"
@@ -19,6 +20,7 @@ namespace simlinx {
     RAM &mem;
     MMU mmu;
     BasicBlockCache icache;
+    Fault fault = Fault::NO_FAULT;
     uint64_t executedI = 0;
 
   public:
