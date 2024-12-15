@@ -19,6 +19,7 @@ namespace simlinx {
     RAM &mem;
     MMU mmu;
     BasicBlockCache icache;
+    uint64_t executedI = 0;
 
   public:
     void run(reg_t pc);

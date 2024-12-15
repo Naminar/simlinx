@@ -36,9 +36,13 @@ namespace simlinx {
     Fault fault = Fault::NO_FAULT;
     decltype(core.pc_reg) prev_pc; // = core.pc_reg;
 
+    if (inst.instrId == InstrId::NONE)
+      fault = Fault::THE_END_OF_TASK;
+
     while (instructionsItr < blockSize && inst.instrId != InstrId::EBBC &&
            fault == Fault::NO_FAULT) {
       core.regs[0] = 0;
+      core.executedI++;
       prev_pc = core.pc_reg;
       fault = ISA::executeFunctions[inst.instrId](core, inst);
       instructionsItr++;
