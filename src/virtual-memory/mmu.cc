@@ -28,8 +28,7 @@ namespace simlinx {
         assert(fault == PageFault::NoFault);
         return walk_pa;
       }
-    } else
-      assert(false);
+    }
 
     return va;
   }

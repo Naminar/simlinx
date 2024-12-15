@@ -14,7 +14,7 @@ namespace simlinx {
         regs[0] = 0;
         auto prev_pc = pc_reg;
         ISA::BasedInstruction inst;
-        auto decodedBits = mem.load<uint32_t>(pc_reg);
+        auto decodedBits = load<uint32_t>(pc_reg);
         std::cout << "PC = " << std::hex << pc_reg << " " << std::dec;
         decode(decodedBits, inst);
         if (inst.instrId == InstrId::NONE) {
