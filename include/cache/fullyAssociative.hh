@@ -45,4 +45,10 @@ public:
     miss++;
     return nullptr;
   }
+
+  void dump() const {
+    for (const auto &[key, val] : indexes) {
+      alignedArray[val].dump();
+    }
+  }
 };

@@ -9,6 +9,9 @@ namespace simlinx {
   void Core::run(Core::reg_t pc) {
     pc_reg = pc;
     regs[2] = 900_KB;
+    icache.createNewBlock(*this);
+    icache.createNewBlock(*this, 0x80000050);
+    // icache.dump();
     while (true)
       try {
         regs[0] = 0;

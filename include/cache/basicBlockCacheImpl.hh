@@ -7,17 +7,22 @@ namespace simlinx {
 
   template <uint32_t blockSize>
     requires(blockSize > 0)
-  BasicBlock<blockSize>::BasicBlock(Core &core) {
-    auto basicBlockPC = core.pc_reg;
+  BasicBlock<blockSize>::BasicBlock(Core &core, uint64_t pc) {
+    auto basicBlockPC = pc;
     uint32_t instructionsItr = 0;
     BasedInstruction decodingInst;
+    std::cout << "Creating BasicBlock" << std::endl;
     do {
       auto decodedBits = core.mem.load<uint32_t>(basicBlockPC);
       core.decode(decodedBits, decodingInst);
       instructions[instructionsItr] = decodingInst;
+      std::cout << "PC: 0x" << std::hex << basicBlockPC << std::dec
+                << " Decoding instruction: " << decodingInst.instrId
+                << " EBB: " << decodingInst.isEBB() << std::endl;
       basicBlockPC += 4;
       instructionsItr++;
     } while (instructionsItr < blockSize - 1 && !decodingInst.isEBB());
+    std::cout << "End of creating BasicBlock" << std::endl;
     decodingInst.instrId = InstrId::EBBC;
     instructions[instructionsItr] = decodingInst;
   }
@@ -36,5 +41,15 @@ namespace simlinx {
       inst = instructions[instructionsItr];
     }
     return fault;
+  }
+
+  template <uint32_t blockSize>
+    requires(blockSize > 0)
+  void BasicBlock<blockSize>::dump() const {
+    std::cout << "BasicBlock:" << std::endl;
+    for (auto inst : instructions) {
+      std::cout << "Instruction:" << inst.instrId << std::endl;
+    }
+    std::cout << "End of BasicBlock" << std::endl;
   }
 } // namespace simlinx

@@ -14,7 +14,6 @@ execute_cc_tmpl = Template("""
     {% for instruction in implInstrSet %}
     Fault execute{{ instruction.instruction }}({{ instruction.unusedCore }}simlinx::Core& core, {{ instruction.unusedBasedInstr }}ISA::BasedInstruction& instr) {
       {{ instruction.execute | indent(2)}}
-      {% if instruction.isEBB %} instr.setEBB();{% endif %}
       return Fault::NO_FAULT;
     };
     {% endfor %}
@@ -49,6 +48,7 @@ NONE
 decoder_block_tmpl = Template(
 """{{' '*tab}}decodedInstr.matchBitsId(decodedBits, InstrId::{{ instr_id }});
 {{' '*tab}}{{ decode | indent(tab)}}
+{% if isEBB %} decodedInstr.setEBB();{% endif %}
 """)
 
 bitfields_hh_tmpl = Template("""
