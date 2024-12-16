@@ -19,7 +19,6 @@ execute_cc_tmpl = Template("""
     {% for instruction in implInstrSet %}
     void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
       std::cout << __PRETTY_FUNCTION__ << std::endl;
-      core.dump();
       core.regs[0] = 0;
       {% if instruction.updateCoreState %} 
         core.pc_reg += (curI-bbsI)*sizeof(uint32_t); 
@@ -27,7 +26,7 @@ execute_cc_tmpl = Template("""
       {% endif %}
       {#{% if instruction.isEBB %} core.pc_reg += (curI-bbsI)*sizeof(uint32_t);  {% endif %}#}
       {{ instruction.execute | indent(2)}}
-      
+      core.dump(); std::cout << std::endl;
       {% if not instruction.isEBB %} (curI+1)->exec(core, 
       {% if instruction.updateCoreState %} curI {% else %} bbsI {% endif %}
       , curI+1);{% endif %}

@@ -416,6 +416,13 @@
   execute: |
     core.regs[rd] = sext<32>(bitsFrom(core.regs[rs1], 31, 0) >> imm);
 
+- instruction: srai
+  decode: |
+    decodedInstr.imm = IMM6; // RV64 mode
+    decodedInstr.rs1 = RS1;
+    decodedInstr.rd = RD;
+  execute: |
+    core.regs[rd] = asSigned(core.regs[rs1]) >> imm;
 
 - instruction: sraiw
   decode: |
