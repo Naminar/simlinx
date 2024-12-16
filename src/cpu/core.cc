@@ -25,6 +25,7 @@ namespace simlinx {
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    dump();
     std::cout << "Hit: " << icache.getHit() << " Miss: " << icache.getMiss()
               << std::endl;
     std::cout << "Execution time: " << duration.count() << " microseconds"

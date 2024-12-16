@@ -18,10 +18,17 @@ execute_cc_tmpl = Template("""
 
     {% for instruction in implInstrSet %}
     void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
-      {
-      {% if instruction.isEBB %} core.pc_reg += (curI-bbsI)*sizeof(uint32_t);  {% endif %}
+      core.regs[0] = 0;
+      {% if instruction.updateCoreState %} 
+        core.pc_reg += (curI-bbsI)*sizeof(uint32_t); 
+        core.executedI += (curI-bbsI+1); 
+      {% endif %}
+      {#{% if instruction.isEBB %} core.pc_reg += (curI-bbsI)*sizeof(uint32_t);  {% endif %}#}
       {{ instruction.execute | indent(2)}}
-      {% if not instruction.isEBB %} }(curI+1)->exec(core, bbsI, curI+1); {% else %} core.executedI += (curI-bbsI+1); } {% endif %}
+      
+      {% if not instruction.isEBB %} (curI+1)->exec(core, 
+      {% if instruction.updateCoreState %} curI {% else %} bbsI {% endif %}
+      , curI+1);{% endif %}
     };
     {% endfor %}
                            

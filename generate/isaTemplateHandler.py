@@ -49,6 +49,8 @@ class YamlHandler:
                 if token in implemInstr['execute']:
                     implemInstr['isEBB'] = True
                     break
+        if 'pc_reg' in implemInstr['execute']:
+            implemInstr['updateCoreState'] = True
         implemInstr['unusedCore'] = ''
         implemInstr['unusedBasedInstr'] = ''
         if 'core' not in implemInstr['execute']:

@@ -6,6 +6,7 @@
   execute: |
     if (core.regs[rd] == 0) {
         core.CSRs[csr] = core.regs[rs1];
+        return;
         //return Fault::NO_FAULT;    
     }
 
