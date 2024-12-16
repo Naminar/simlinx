@@ -16,7 +16,7 @@ namespace simlinx {
     Fault fault = Fault::NO_FAULT;
 
     auto start = std::chrono::high_resolution_clock::now();
-    while (true && fault == Fault::NO_FAULT) {
+    while (true && fault == Fault::NO_FAULT && this->fault == Fault::NO_FAULT) {
       bb = icache.lookup(pc_reg);
       if (!bb)
         bb = icache.createNewBlock(*this);
