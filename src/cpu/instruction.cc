@@ -37,4 +37,6 @@ namespace ISA {
     _dump(imm, "imm");
   }
 
+  const char *BasedInstruction::dumpName() const { return InstrNames[instrId]; }
+
 } // namespace ISA

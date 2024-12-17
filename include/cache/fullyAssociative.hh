@@ -49,8 +49,11 @@ public:
   inline StorageT *getLastInserted() { return &alignedArray[roundRobinInd]; }
 
   void dump() const {
+    std::cout << "Dumping cache: \n";
+    uint16_t indx = 0;
     for (const auto &[key, val] : indexes) {
-      alignedArray[val].dump();
+      alignedArray[val].dump(indx);
+      indx++;
     }
   }
 };

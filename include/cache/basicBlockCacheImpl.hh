@@ -46,10 +46,10 @@ namespace simlinx {
 
   template <uint32_t blockSize>
     requires(blockSize > 0)
-  void BasicBlock<blockSize>::dump() const {
-    std::cout << "BasicBlock:" << std::endl;
+  void BasicBlock<blockSize>::dump(u_int32_t indx) const {
+    std::cout << "BasicBlock:" << indx << std::endl;
     for (uint32_t i = 0; i < blockSize; i++) {
-      std::cout << "Instruction:" << instructions[i].instrId
+      std::cout << "Instruction:" << instructions[i].dumpName()
                 << " addr: " << &instructions[i] << std::endl;
     }
     std::cout << "End of BasicBlock" << std::endl;

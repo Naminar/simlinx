@@ -18,7 +18,7 @@ namespace simlinx {
     BasicBlock() = default;
     BasicBlock(Core &core, u_int64_t pc);
     Fault execute(Core &core);
-    void dump() const;
+    void dump(u_int32_t) const;
   };
 
   class BasicBlockCache : public FullyAssociativeCache<BasicBlock<>> {

@@ -112,6 +112,7 @@ namespace ISA {
     template <bool enBinary = true, bool enHex = true, typename T = uint64_t>
     void _dump(T param, const std::string &name);
     void dump();
+    const char *dumpName() const;
   };
 
 } // end namespace ISA
