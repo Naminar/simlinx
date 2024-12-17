@@ -19,12 +19,14 @@ namespace simlinx {
     X86JitCompiller jit;
 
     auto start = std::chrono::high_resolution_clock::now();
-    while (true && fault == Fault::NO_FAULT) {
+    while (true && fault == Fault::NO_FAULT && this->fault == Fault::NO_FAULT) {
       bb = icache.lookup(pc_reg);
       if (!bb)
         bb = icache.createNewBlock(*this, jit);
       fault = bb->execute(*this);
     }
+    std::cout << "final icache:" << std::endl;
+    icache.dump();
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);

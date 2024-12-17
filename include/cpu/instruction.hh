@@ -14,7 +14,14 @@ namespace simlinx {
 
 namespace ISA {
 
-  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  inline int64_t asSigned(uint64_t val) {
+    union {
+      uint64_t _v;
+      int64_t _r;
+    };
+    _v = val;
+    return _r; // static_cast<int64_t>(val);
+  }
   template <std::signed_integral S = int64_t, typename U = uint64_t>
   inline S asSigned(U val) {
     return static_cast<S>(val);
@@ -105,6 +112,7 @@ namespace ISA {
     template <bool enBinary = true, bool enHex = true, typename T = uint64_t>
     void _dump(T param, const std::string &name);
     void dump();
+    const char *dumpName() const;
   };
 
 } // end namespace ISA

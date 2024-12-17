@@ -18,6 +18,7 @@ execute_cc_tmpl = Template("""
 
     {% for instruction in implInstrSet %}
     void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
+      {#std::cout << __PRETTY_FUNCTION__ << std::endl;#}
       core.regs[0] = 0;
       {% if instruction.updateCoreState %} 
         core.pc_reg += (curI-bbsI)*sizeof(uint32_t); 
@@ -25,7 +26,7 @@ execute_cc_tmpl = Template("""
       {% endif %}
       {#{% if instruction.isEBB %} core.pc_reg += (curI-bbsI)*sizeof(uint32_t);  {% endif %}#}
       {{ instruction.execute | indent(2)}}
-      
+      {#core.dump(); std::cout << std::endl;#}
       {% if not instruction.isEBB %} (curI+1)->exec(core, 
       {% if instruction.updateCoreState %} curI {% else %} bbsI {% endif %}
       , curI+1);{% endif %}
@@ -33,6 +34,8 @@ execute_cc_tmpl = Template("""
     {% endfor %}
                            
     void executeEbbc(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
+      std::cout << __PRETTY_FUNCTION__ << std::endl;
+      core.dump();
       core.pc_reg += (curI-bbsI)*sizeof(uint32_t);
       core.executedI += (curI-bbsI);
     }
@@ -42,6 +45,9 @@ execute_cc_tmpl = Template("""
     #undef csr
     #undef imm
     }
+///TODO: must be in instruction.hh or enum.gen.cc
+std::array<const char*, {{ implInstrSet|length + 2 }}> InstrNames = 
+{ {% for instruction in implInstrSet %}"{{ instruction.instruction }}", {% endfor %}"EBBC", "NONE" };
 """)
 
 execute_hh_tmpl = Template("""
@@ -49,6 +55,7 @@ execute_hh_tmpl = Template("""
   #include "cpu/fault.hh"
   #include "cpu/instruction.hh"
   #include "syscall/syscall.gen.hh"
+  #include "cpu/enum.gen.hh"
   namespace ISA {
     {% for instruction in implInstrSet %}
     void execute{{ instruction.instruction }}(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI);
@@ -64,11 +71,15 @@ execute_hh_tmpl = Template("""
 """)
 
 enum_hh_tmpl = Template("""
+#pragma once
+#include <array>
 enum InstrId {
 {% for instruction in implInstrSet %}{{ instruction.instruction.upper() }} = {{ loop.index0 }},
 {% endfor %} EBBC, //basic block end canary
 NONE
 };
+
+extern std::array<const char *, {{ implInstrSet|length + 2 }}> InstrNames;                
 """)
 
 

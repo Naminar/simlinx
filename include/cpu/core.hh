@@ -8,6 +8,7 @@
 #include "virtual-memory/mmu.hh"
 #include <array>
 #include <cstdint>
+#include <iomanip>
 
 
 struct X86JitCompiller;
@@ -32,9 +33,14 @@ namespace simlinx {
     void decode(uint32_t decodedBits, ISA::BasedInstruction &decodedInstr, X86JitCompiller& gen);
     Core(RAM &ram) : mem(ram), mmu(*this){};
     void dump() const {
+      // clang-format off
       for (size_t i = 0; i < regs.size(); i++) {
-        std::cout << "Reg" << i << ": " << regs[i] << std::endl;
+        std::cout << "Reg" << std::left << std::setw(2) << std::setfill(' ') << i << ": " << 
+        std::setw(20) << std::setfill(' ') << regs[i] << 
+        std::hex << " | hex: " << std::setw(18) << std::setfill(' ') << regs[i] << 
+        std::dec << " | bits: " << std::bitset<64>(regs[i]) <<  std::endl;
       }
+      // clang-format on
     }
   };
 } // namespace simlinx
