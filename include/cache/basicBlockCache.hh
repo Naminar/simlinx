@@ -15,10 +15,11 @@ namespace simlinx {
   class BasicBlock {
     std::array<BasedInstruction, blockSize> instructions;
     void (*f)() = nullptr;
+    size_t terminatorIdx = 0;
   public:
     BasicBlock() = default;
     BasicBlock(Core &core, u_int64_t pc, X86JitCompiller& jit);
-    Fault execute(Core &core);
+    Fault execute(Core &core, X86JitCompiller& jit);
     void dump(u_int32_t) const;
   };
 

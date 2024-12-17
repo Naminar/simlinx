@@ -3,10 +3,10 @@
     decodedInstr.imm = IMM20;
     decodedInstr.rd = RD;
   jit: |
-    auto imm = sext<20>(IMM20);
-    auto rd  = jit.reg_64(RD);
-    jit.gen.mov(rd, imm);
-    jit.gen.shl(rd, 12);
+    // auto imm = sext<20>(IMM20);
+    // auto rd  = // jit.reg_64(RD);
+    // jit.gen.mov(rd, imm);
+    // jit.gen.shl(rd, 12);
   execute: |
     core.regs[rd] = sext<20>(imm) << 12;
 
@@ -37,7 +37,7 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.imm = IMM12;
   jit: |
-    jit.gen.ret();
+    // // jit.gen.ret();
   execute: |
     reg_t tmp = core.pc_reg + 4;
     core.pc_reg = (core.regs[rs1] + sext<12>(imm)) &  ~1U;
@@ -89,7 +89,7 @@
                         | bitsFrom(decodedBits, 30, 25) << 5
                         | bitsFrom(decodedBits, 31, 31) << 12;
   jit: |
-    jit.gen.ret();
+    // // jit.gen.ret();
   execute: |
     core.pc_reg += (asSigned(core.regs[rs1]) >= asSigned(core.regs[rs2]))? sext<13>(imm) : 4U;
 
@@ -146,11 +146,11 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   jit: |
-    auto rs1 = jit.reg_64(RS1);
-    auto rd  = jit.reg_32(RD);
-    auto imm = sext<12>(IMM12);
-    jit.gen.mov(rd, ptr[rs1 + imm]);
-    jit.gen.movsxd(rd.cvt64(), rd);
+    // auto rs1 = // jit.reg_64(RS1);
+    // auto rd  = // jit.reg_32(RD);
+    // auto imm = sext<12>(IMM12);
+    // jit.gen.mov(rd, ptr[rs1 + imm]);
+    // jit.gen.movsxd(rd.cvt64(), rd);
   execute: |
     core.regs[rd] = sext<32>(
                               bitsFrom(core.mem.load<uint64_t>(core.regs[rs1] + sext<12>(imm)), 31, 0)
@@ -163,10 +163,10 @@
     decodedInstr.rd = RD;
     decodedInstr.imm = IMM12;
   jit: |
-    auto rs1 = jit.reg_64(RS1);
-    auto rd  = jit.reg_64(RD);
-    auto imm = sext<12>(IMM12);
-    jit.gen.mov(rd, ptr[rs1 + imm]);
+    // auto rs1 = // jit.reg_64(RS1);
+    // auto rd  = // jit.reg_64(RD);
+    // auto imm = sext<12>(IMM12);
+    // jit.gen.mov(rd, ptr[rs1 + imm]);
   execute: |
     core.regs[rd] = core.mem.load<uint64_t>(core.regs[rs1] + sext<12>(imm));
 
@@ -213,10 +213,10 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   jit: |
-    auto rs1 = jit.reg_64(RS1);
-    auto rs2 = jit.reg_32(RS2);
-    auto imm = sext<12>(IMM12HI << 5 | IMM12LO);
-    jit.gen.mov(ptr[rs1 + imm], rs2);
+    // auto rs1 = // jit.reg_64(RS1);
+    // auto rs2 = // jit.reg_32(RS2);
+    // auto imm = sext<12>(IMM12HI << 5 | IMM12LO);
+    // jit.gen.mov(ptr[rs1 + imm], rs2);
   execute: |
     core.mem.store<uint32_t>(core.regs[rs1] + sext<12>(imm), bitsFrom(core.regs[rs2], 31, 0));
 
@@ -227,10 +227,10 @@
     decodedInstr.rs2 = RS2;
     decodedInstr.imm = IMM12HI << 5 | IMM12LO;
   jit: |
-    auto rs1 = jit.reg_64(RS1);
-    auto rs2 = jit.reg_64(RS2);
-    auto imm = sext<12>(IMM12HI << 5 | IMM12LO);
-    jit.gen.mov(ptr[rs1 + imm], rs2);
+    // auto rs1 = // jit.reg_64(RS1);
+    // auto rs2 = // jit.reg_64(RS2);
+    // auto imm = sext<12>(IMM12HI << 5 | IMM12LO);
+    // jit.gen.mov(ptr[rs1 + imm], rs2);
   execute: |
     core.mem.store<uint64_t>(core.regs[rs1] + sext<12>(imm), bitsFrom(core.regs[rs2], 63, 0));
 
@@ -245,7 +245,10 @@
     auto rs1 = jit.reg_64(RS1);
     auto rd  = jit.reg_64(RD);        
     auto tmp = jit.tmp_64;
-    jit.gen.lea(rd, ptr[rs1 + imm]);
+    jit.gen.mov(tmp, rs1);
+    jit.gen.add(tmp, imm);
+    jit.gen.mov(rd, tmp);
+    // jit.gen.lea(rd, ptr[rs1 + imm]);
   execute: |
     core.regs[rd] = core.regs[rs1] + sext<12>(imm);
 
@@ -405,11 +408,11 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   jit: |
-    auto imm = sext<12>(IMM12);
-    auto rs1 = jit.reg_64(RS1);
-    auto rd  = jit.reg_32(RD);
-    jit.gen.lea(rd, ptr[rs1 + imm]);
-    jit.gen.movsxd(rd.cvt64(), rd);
+    // auto imm = sext<12>(IMM12);
+    // auto rs1 = // jit.reg_64(RS1);
+    // auto rd  = // jit.reg_32(RD);
+    // jit.gen.lea(rd, ptr[rs1 + imm]);
+    // jit.gen.movsxd(rd.cvt64(), rd);
   execute: |
     core.regs[rd] = sext<32>(bitsFrom(core.regs[rs1] + sext<12>(imm), 31, 0));
 

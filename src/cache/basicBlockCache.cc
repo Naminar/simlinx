@@ -4,10 +4,14 @@
 
 namespace simlinx {
   BasicBlock<> *BasicBlockCache::createNewBlock(Core &core, X86JitCompiller& jit) {
-    std::cout << "created new block" << std::endl;
+    // std::cout << "created new block" << std::endl;
     insert(BasicBlock<>(core, core.pc_reg, jit), core.pc_reg);
-    dump();
-    std::cout << "--created new block--" << std::endl;
+    // dump();
+    // std::cout << "Dump:\n";
+    // jit.gen.dump();
+    // std::cout << "Dump end\n";
+    jit.gen.reset();
+    // std::cout << "--created new block--" << std::endl;
     return getLastInserted();
   }
   BasicBlock<> *BasicBlockCache::createNewBlock(Core &core, uint64_t pc, X86JitCompiller& jit) {

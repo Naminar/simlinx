@@ -23,7 +23,7 @@ namespace simlinx {
       bb = icache.lookup(pc_reg);
       if (!bb)
         bb = icache.createNewBlock(*this, jit);
-      fault = bb->execute(*this);
+      fault = bb->execute(*this, jit);
     }
     std::cout << "final icache:" << std::endl;
     icache.dump();
