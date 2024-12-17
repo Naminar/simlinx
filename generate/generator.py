@@ -6,8 +6,11 @@ import isaTemplateHandler as tmph
 from autoClangFormat import make_clang_format
 
 decoder_tree_header = """
+#include "jit/jitCompiller.hh"
+
 using ISA::bitsFrom;
-void simlinx::Core::decode(uint32_t decodedBits, ISA::BasedInstruction& decodedInstr) {
+void simlinx::Core::decode(uint32_t decodedBits, ISA::BasedInstruction& decodedInstr, X86JitCompiller& jit) {
+using namespace Xbyak::util;
 """
 
 class Generator:

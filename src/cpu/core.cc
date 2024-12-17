@@ -1,6 +1,7 @@
 #include "cpu/core.hh"
 #include "cpu/cpu.hh"
 #include "cpu/execute.gen.hh"
+#include "jit/jitCompiller.hh"
 #include <bitset>
 #include <chrono>
 #include <iostream>
@@ -15,11 +16,13 @@ namespace simlinx {
     BasicBlock<> *bb;
     Fault fault = Fault::NO_FAULT;
 
+    X86JitCompiller jit;
+
     auto start = std::chrono::high_resolution_clock::now();
     while (true && fault == Fault::NO_FAULT) {
       bb = icache.lookup(pc_reg);
       if (!bb)
-        bb = icache.createNewBlock(*this);
+        bb = icache.createNewBlock(*this, jit);
       fault = bb->execute(*this);
     }
     auto end = std::chrono::high_resolution_clock::now();

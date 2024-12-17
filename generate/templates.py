@@ -77,6 +77,7 @@ decoder_block_tmpl = Template(
 {{' '*tab}}{{ decode | indent(tab)}}
 decodedInstr.exec = {{'execute'+instr_id[0].upper()+instr_id[1:].lower()}};
 {% if isEBB %} decodedInstr.setEBB();{% endif %}
+{{JIT}}
 """)
 
 bitfields_hh_tmpl = Template("""

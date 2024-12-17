@@ -66,7 +66,13 @@ class YamlHandler:
             print(colored(f'WARNING: {instr} not in decode tree.', 'yellow'))
 
     def creat_decoder_block(self, tab):
-        return decoder_block_tmpl.render(instr_id=self.foundInstr['instruction'].upper(), decode=self.foundInstr['decode'], isEBB=self.foundInstr['isEBB'], tab=tab)
+        if 'jit' not in self.foundInstr.keys():
+            self.foundInstr['jit'] = ' ' 
+        return decoder_block_tmpl.render(instr_id=self.foundInstr['instruction'].upper(), 
+                                         decode=self.foundInstr['decode'], 
+                                         isEBB=self.foundInstr['isEBB'], 
+                                         tab=tab, 
+                                         JIT=self.foundInstr['jit'])
 
     def handle_execute(self):
         with open(self.path+'src/cpu/execute.gen.cc', 'w', encoding='utf-8') as executeCC:

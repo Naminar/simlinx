@@ -2,6 +2,7 @@
 #include "cache/fullyAssociative.hh"
 #include "cpu/instruction.hh"
 #include "cpu/fault.hh"
+#include "jit/jitCompiller.hh"
 #include <tuple>
 #include <type_traits>
 
@@ -13,20 +14,20 @@ namespace simlinx {
     requires(blockSize > 0)
   class BasicBlock {
     std::array<BasedInstruction, blockSize> instructions;
-
+    void (*f)() = nullptr;
   public:
     BasicBlock() = default;
-    BasicBlock(Core &core, u_int64_t pc);
+    BasicBlock(Core &core, u_int64_t pc, X86JitCompiller& jit);
     Fault execute(Core &core);
     void dump() const;
   };
 
   class BasicBlockCache : public FullyAssociativeCache<BasicBlock<>> {
   public:
-    BasicBlock<> *createNewBlock(Core &core); // { insert(BasicBlock<>(core,
+    BasicBlock<> *createNewBlock(Core &core, X86JitCompiller& jit); // { insert(BasicBlock<>(core,
                                               // core.pc_reg), core.pc_reg); }
     BasicBlock<> *
     createNewBlock(Core &core,
-                   uint64_t pc); // { insert(BasicBlock<>(core, pc), pc); }
+                   uint64_t pc, X86JitCompiller& jit); // { insert(BasicBlock<>(core, pc), pc); }
   };
 } // namespace simlinx
