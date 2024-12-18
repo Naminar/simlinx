@@ -34,8 +34,7 @@ execute_cc_tmpl = Template("""
     {% endfor %}
                            
     void executeEbbc(simlinx::Core &core, BasedInstruction* bbsI, BasedInstruction* curI) {
-      std::cout << __PRETTY_FUNCTION__ << std::endl;
-      core.dump();
+      {#std::cout << __PRETTY_FUNCTION__ << std::endl;#}
       core.pc_reg += (curI-bbsI)*sizeof(uint32_t);
       core.executedI += (curI-bbsI);
     }

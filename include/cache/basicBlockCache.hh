@@ -9,7 +9,7 @@ namespace simlinx {
   struct Core;
 
   using namespace ISA;
-  template <uint32_t blockSize = 64>
+  template <uint32_t blockSize = 10>
     requires(blockSize > 0)
   class BasicBlock {
     std::array<BasedInstruction, blockSize> instructions;
