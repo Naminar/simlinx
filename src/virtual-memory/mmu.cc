@@ -9,7 +9,7 @@ namespace simlinx {
   Addr MMU::translate(Addr va, MemoryMode mode) {
     std::optional<Addr> pa;
     if (core.CSRs[CSRRegister::satp] >> 60 == 8U) {
-      std::cout << "MMU: va memory enabled" << std::endl;
+      // std::cout << "MMU: va memory enabled" << std::endl;
       if (mode == MemoryMode::READ) {
         pa = tlbR.translate(va);
       }
@@ -21,23 +21,23 @@ namespace simlinx {
       }
 
       if (pa.has_value()) {
-        std::cout << "translated in TLB" << std::endl;
+        // std::cout << "translated in TLB" << std::endl;
         // return pa.value();
       } else {
-        std::cout << "Starting walker" << std::endl;
+        // std::cout << "Starting walker" << std::endl;
         Addr walk_pa;
         PageFault fault = walker.walk(va, &walk_pa, mode);
+        // std::cout << "=================================" << std::endl;
         assert(fault == PageFault::NoFault);
         pa = walk_pa;
         // return walk_pa;
       }
     } else {
-      uint64_t mmvl = (core.CSRs[CSRRegister::satp]);
-      std::cout << "MMU: va memory disabled" << mmvl << std::endl;
+      // std::cout << "MMU: va memory disabled" << std::endl;
       pa = va;
     }
 
-    std::cout << "MMU: " << std::hex << pa.value() << std::endl;
+    // std::cout << "MMU: " << std::hex << pa.value() << std::endl;
 
     return pa.value();
   }

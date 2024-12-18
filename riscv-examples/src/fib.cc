@@ -7,6 +7,7 @@ void InitMMU() {
   builder.SecondLevelPtCnfg(0x10, 0x2, NextLevel);
   builder.ThirdLevelPtCnfg(0x10, 0x10, XO);
   builder.ThirdLevelPtCnfg(0xe1, 0xe1, RW);
+  builder.ThirdLevelPtCnfg(0xe0, 0xe0, RW);
   builder.EnableTranslation();
 }
 
