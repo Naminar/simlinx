@@ -75,6 +75,9 @@ namespace simlinx {
       mmu.tlbW.insert(va, *pa);
     if ((pte & xbit) == xbit)
       mmu.tlbX.insert(va, *pa);
+
+    std::cout << "Translated va:" << std::hex << va << " to pa:" << *pa
+              << std::endl;
     return PageFault::NoFault;
   }
 

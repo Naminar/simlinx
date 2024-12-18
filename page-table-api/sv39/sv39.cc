@@ -71,7 +71,7 @@ void Sv39PageTableBuilder::ThirdLevelPtCnfg(Addr vpn, Addr ppn,
 }
 
 void Sv39PageTableBuilder::EnableTranslation() {
-  uint32_t satp;
+  Reg satp;
   asm("csrrs %[dest], satp, x0" : [dest] "=r"(satp)); // read satp
   satp |= (0b1000ULL << 60);
   asm("csrrw x0, satp, %[value]" ::[value] "r"(satp)); // write satp
