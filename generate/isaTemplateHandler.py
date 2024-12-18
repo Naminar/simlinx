@@ -40,6 +40,17 @@ class YamlHandler:
 
     def set_decoded_instr(self, implemInstr: dict):
         implemInstr['instruction'] = implemInstr['instruction'][0].upper() + implemInstr['instruction'][1:]
+        # if 'isEBB' not in implemInstr.keys():
+        #     implemInstr['isEBB'] = False
+        implemInstr['isEBB'] = False
+        for sign in ['+=', '-=', '=']:
+            for gap in [' ', '']:
+                token = 'pc_reg' + gap + sign
+                if token in implemInstr['execute']:
+                    implemInstr['isEBB'] = True
+                    break
+        if 'pc_reg' in implemInstr['execute']:
+            implemInstr['updateCoreState'] = True
         implemInstr['unusedCore'] = ''
         implemInstr['unusedBasedInstr'] = ''
         if 'core' not in implemInstr['execute']:
@@ -55,7 +66,7 @@ class YamlHandler:
             print(colored(f'WARNING: {instr} not in decode tree.', 'yellow'))
 
     def creat_decoder_block(self, tab):
-        return decoder_block_tmpl.render(instr_id=self.foundInstr['instruction'].upper(), decode=self.foundInstr['decode'], tab=tab)
+        return decoder_block_tmpl.render(instr_id=self.foundInstr['instruction'].upper(), decode=self.foundInstr['decode'], isEBB=self.foundInstr['isEBB'], tab=tab)
 
     def handle_execute(self):
         with open(self.path+'src/cpu/execute.gen.cc', 'w', encoding='utf-8') as executeCC:

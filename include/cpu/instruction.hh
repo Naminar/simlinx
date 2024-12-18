@@ -8,9 +8,20 @@
 #include <iostream>
 #include <vector>
 
+namespace simlinx {
+  class Core;
+}
+
 namespace ISA {
 
-  inline int64_t asSigned(uint64_t val) { return static_cast<int64_t>(val); }
+  inline int64_t asSigned(uint64_t val) {
+    union {
+      uint64_t _v;
+      int64_t _r;
+    };
+    _v = val;
+    return _r; // static_cast<int64_t>(val);
+  }
   template <std::signed_integral S = int64_t, typename U = uint64_t>
   inline S asSigned(U val) {
     return static_cast<S>(val);
@@ -73,11 +84,19 @@ namespace ISA {
   }
 
   class BasedInstruction {
+  private:
+    bool _isEBB = false;
+
   public:
+    void (*exec)(simlinx::Core &core, BasedInstruction *bbsI,
+                 BasedInstruction *curI) = nullptr;
     uint64_t instrBits;
 
     // for array of exec functions
     InstrId instrId;
+    // end of basic block
+    void setEBB() { _isEBB = true; };
+    inline bool isEBB() const { return _isEBB; };
 
     // instruction's operands
   public:
@@ -88,39 +107,12 @@ namespace ISA {
     uint64_t csr = 0;
     uint64_t imm = 0;
 
-    void reset() {
-      instrBits = 0;
-      instrId = InstrId::NONE;
-
-      offset = 0;
-      rd = 0;
-      rs1 = 0;
-      rs2 = 0;
-      csr = 0;
-      imm = 0;
-    }
-    void matchBitsId(uint64_t bits, InstrId id) {
-      instrBits = bits;
-      instrId = id;
-    }
+    void reset();
+    void matchBitsId(uint64_t bits, InstrId id);
     template <bool enBinary = true, bool enHex = true, typename T = uint64_t>
-    void _dump(T param, const std::string &name) {
-      std::cout << name << " = " << std::dec << param;
-      if (enBinary)
-        std::cout << " | binary = " << std::bitset<sizeof(T) * 8>(param);
-      if (enHex)
-        std::cout << " | hex = " << std::hex << param << std::endl;
-      else
-        std::cout << std::endl;
-      std::cout << std::dec;
-    }
-    void dump() {
-      _dump(offset, "offset");
-      _dump(rd, "rd");
-      _dump(rs1, "rs1");
-      _dump(rs2, "rs2");
-      _dump(imm, "imm");
-    }
+    void _dump(T param, const std::string &name);
+    void dump();
+    const char *dumpName() const;
   };
 
 } // end namespace ISA

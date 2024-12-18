@@ -1,4 +1,5 @@
 
+#pragma once
 #include <cstdint>
 
 class Statistic {
@@ -7,6 +8,6 @@ public:
   uint64_t miss = 0;
 
 public:
-  uint64_t getHit() { return hit; };
-  uint64_t getMiss() { return miss; };
+  uint64_t getHit();
+  uint64_t getMiss();
 };

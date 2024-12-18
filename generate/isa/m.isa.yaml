@@ -4,7 +4,7 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    core.regs[instr.rd] = core.regs[instr.rs1] * core.regs[instr.rs2];
+    core.regs[rd] = core.regs[rs1] * core.regs[rs2];
 
 
 - instruction: mulh
@@ -13,11 +13,11 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    core.regs[instr.rd] = (uint64_t)
+    core.regs[rd] = (uint64_t)
                             (
-                              ( sextDoubleSize<uint128_t, uint64_t>(core.regs[instr.rs1]) 
+                              ( sextDoubleSize<uint128_t, uint64_t>(core.regs[rs1]) 
                                 * 
-                                sextDoubleSize<uint128_t, uint64_t>(core.regs[instr.rs2])
+                                sextDoubleSize<uint128_t, uint64_t>(core.regs[rs2])
                               ) >> 64
                             );
 
@@ -28,11 +28,11 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    core.regs[instr.rd] = (uint64_t)
+    core.regs[rd] = (uint64_t)
                             (
-                              ( sextDoubleSize<uint128_t, uint64_t>(core.regs[instr.rs1]) 
+                              ( sextDoubleSize<uint128_t, uint64_t>(core.regs[rs1]) 
                                 * 
-                                (uint128_t)(core.regs[instr.rs2])
+                                (uint128_t)(core.regs[rs2])
                               ) >> 64
                             );
 
@@ -43,11 +43,11 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    core.regs[instr.rd] = (uint64_t)
+    core.regs[rd] = (uint64_t)
                             (
-                              ( (uint128_t)(core.regs[instr.rs1]) 
+                              ( (uint128_t)(core.regs[rs1]) 
                                 * 
-                                (uint128_t)(core.regs[instr.rs2])
+                                (uint128_t)(core.regs[rs2])
                               ) >>64
                             );
 
@@ -58,12 +58,12 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = (uint64_t)-1LL;
-    } else if (core.regs[instr.rs1] == 1ULL << 63 && core.regs[instr.rs2] == -1ULL) {
-      core.regs[instr.rd] = 1ULL << 63;
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = (uint64_t)-1LL;
+    } else if (core.regs[rs1] == 1ULL << 63 && core.regs[rs2] == -1ULL) {
+      core.regs[rd] = 1ULL << 63;
     } else
-      core.regs[instr.rd] = (int64_t)core.regs[instr.rs1] / (int64_t)core.regs[instr.rs2];
+      core.regs[rd] = (int64_t)core.regs[rs1] / (int64_t)core.regs[rs2];
 
 
 - instruction: divu
@@ -72,10 +72,10 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = (uint64_t)-1LL;
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = (uint64_t)-1LL;
     } else
-      core.regs[instr.rd] = core.regs[instr.rs1] / core.regs[instr.rs2];
+      core.regs[rd] = core.regs[rs1] / core.regs[rs2];
 
 
 - instruction: rem
@@ -84,12 +84,12 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = core.regs[instr.rs1];
-    } else if (core.regs[instr.rs1] == 1ULL << 63 && core.regs[instr.rs2] == -1ULL) {
-      core.regs[instr.rd] = 0ULL;
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = core.regs[rs1];
+    } else if (core.regs[rs1] == 1ULL << 63 && core.regs[rs2] == -1ULL) {
+      core.regs[rd] = 0ULL;
     } else
-      core.regs[instr.rd] = (int64_t)core.regs[instr.rs1] % (int64_t)core.regs[instr.rs2];
+      core.regs[rd] = (int64_t)core.regs[rs1] % (int64_t)core.regs[rs2];
 
 
 - instruction: remu
@@ -98,10 +98,10 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = core.regs[instr.rs1];
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = core.regs[rs1];
     } else
-      core.regs[instr.rd] = core.regs[instr.rs1] % core.regs[instr.rs2];
+      core.regs[rd] = core.regs[rs1] % core.regs[rs2];
 
 
 - instruction: mulw
@@ -110,7 +110,7 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    core.regs[instr.rd] = sext<64,32>(core.regs[instr.rs1] * core.regs[instr.rs2]);
+    core.regs[rd] = sext<64,32>(core.regs[rs1] * core.regs[rs2]);
 
 
 - instruction: divw
@@ -119,12 +119,12 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = (uint64_t)-1LL;
-    } else if (bitsFrom(core.regs[instr.rs1], 31, 0) == 1ULL << 31 && bitsFrom(core.regs[instr.rs2], 31, 0) == ((1ULL<<32) - 1)) {
-      core.regs[instr.rd] = -1ULL << 31;
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = (uint64_t)-1LL;
+    } else if (bitsFrom(core.regs[rs1], 31, 0) == 1ULL << 31 && bitsFrom(core.regs[rs2], 31, 0) == ((1ULL<<32) - 1)) {
+      core.regs[rd] = -1ULL << 31;
     } else
-      core.regs[instr.rd] = sext<64,32>((int32_t)core.regs[instr.rs1] /(int32_t)core.regs[instr.rs2]);
+      core.regs[rd] = sext<64,32>((int32_t)core.regs[rs1] /(int32_t)core.regs[rs2]);
 
 
 - instruction: divuw
@@ -133,10 +133,10 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    if (core.regs[instr.rs2] == 0ULL) {
-      core.regs[instr.rd] = (uint64_t)-1LL;
+    if (core.regs[rs2] == 0ULL) {
+      core.regs[rd] = (uint64_t)-1LL;
     } else {
-    core.regs[instr.rd] = sext<64,32>(bitsFrom(core.regs[instr.rs1], 31, 0) / bitsFrom(core.regs[instr.rs2], 31, 0));
+    core.regs[rd] = sext<64,32>(bitsFrom(core.regs[rs1], 31, 0) / bitsFrom(core.regs[rs2], 31, 0));
     }
 
 
@@ -146,14 +146,14 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    reg_t src1 = bitsFrom(core.regs[instr.rs1], 31, 0);
-    reg_t src2 = bitsFrom(core.regs[instr.rs2], 31, 0);
+    reg_t src1 = bitsFrom(core.regs[rs1], 31, 0);
+    reg_t src2 = bitsFrom(core.regs[rs2], 31, 0);
     if (src2 == 0ULL) {
-      core.regs[instr.rd] = sext<64,32>(src1);
+      core.regs[rd] = sext<64,32>(src1);
     } else if (src1 == (1ULL << 31) && src2 == ((1ULL<<32) - 1)) {
-      core.regs[instr.rd] = 0ULL;
+      core.regs[rd] = 0ULL;
     } else
-      core.regs[instr.rd] = sext<64,32>((int32_t)src1 % (int32_t)src2);
+      core.regs[rd] = sext<64,32>((int32_t)src1 % (int32_t)src2);
 
 
 - instruction: remuw
@@ -162,9 +162,9 @@
     decodedInstr.rs1 = RS1;
     decodedInstr.rd = RD;
   execute: |
-    reg_t src1 = bitsFrom(core.regs[instr.rs1], 31, 0);
-    reg_t src2 = bitsFrom(core.regs[instr.rs2], 31, 0);
+    reg_t src1 = bitsFrom(core.regs[rs1], 31, 0);
+    reg_t src2 = bitsFrom(core.regs[rs2], 31, 0);
     if (src2 == 0ULL) {
-      core.regs[instr.rd] = sext<64,32>(src1);
+      core.regs[rd] = sext<64,32>(src1);
     } else
-      core.regs[instr.rd] = sext<64,32>(src1 % src2);
+      core.regs[rd] = sext<64,32>(src1 % src2);

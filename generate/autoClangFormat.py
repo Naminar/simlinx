@@ -25,3 +25,6 @@ def make_clang_format():
             file_formating(clangFormatPath, file)
         for file in [file for file in glob.iglob(find_simlinx_dir()+'/**/*.gen.hh', recursive=True) if 'decodeTree' not in file]:
             file_formating(clangFormatPath, file)
+
+if __name__ == '__main__':
+    make_clang_format()

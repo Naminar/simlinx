@@ -1,6 +1,8 @@
+#include "cpu/core.hh"
 #include "cpu/cpu.hh"
 #include "cpu/execute.gen.hh"
 #include <bitset>
+#include <chrono>
 #include <iostream>
 #include <print>
 
@@ -9,51 +11,29 @@ namespace simlinx {
   void Core::run(Core::reg_t pc) {
     pc_reg = pc;
     regs[2] = 900_KB;
-    while (true)
-      try {
-        regs[0] = 0;
-        auto prev_pc = pc_reg;
-        ISA::BasedInstruction inst;
-        auto decodedBits = mem.load<uint32_t>(pc_reg);
-        std::cout << "PC = " << std::hex << pc_reg << " " << std::dec;
-        decode(decodedBits, inst);
-        if (inst.instrId == InstrId::NONE) {
-          std::cout << std::dec << " | InstrId = NONE" << std::endl;
-          std::cout << "reg[10] " << regs[10] << "| reg[11] " << regs[11]
-                    << std::endl;
-          int x = 0;
-          std::cout << "===========================" << std::endl;
-          for (auto reg : regs) {
-            std::cout << "reg [" << x << "] " << reg << std::endl;
-            x += 1;
-          }
-          return;
-        }
+    regs[0] = 0;
+    BasicBlock<> *bb;
+    Fault fault = Fault::NO_FAULT;
 
-        try {
-          auto fault = ISA::executeFunctions[inst.instrId](*this, inst);
-          std::cout << std::endl;
-          if (fault != Fault::NO_FAULT) {
-            std::cout << "fault = " << (int)fault << std::endl;
-            return;
-          }
-        } catch (std::exception &e) {
-          std::println("executeFunctions exception! PC = {}", pc_reg);
-          std::println("{}", e.what());
-          return;
-        }
-
-        if (pc_reg == prev_pc)
-          pc_reg += sizeof(uint32_t);
-        else {
-          std::cout << "jump" << std::endl;
-        }
-      }
-
-      catch (std::exception &e) {
-        std::println("load PC = {}", pc_reg);
-        std::println("{}", e.what());
-        return;
-      }
-  };
+    auto start = std::chrono::high_resolution_clock::now();
+    while (true && fault == Fault::NO_FAULT && this->fault == Fault::NO_FAULT) {
+      bb = icache.lookup(pc_reg);
+      if (!bb)
+        bb = icache.createNewBlock(*this);
+      fault = bb->execute(*this);
+    }
+    std::cout << "final icache:" << std::endl;
+    // icache.dump();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    // dump();
+    std::cout << "Hit: " << icache.getHit() << " Miss: " << icache.getMiss()
+              << std::endl;
+    std::cout << "Execution time: " << duration.count() << " microseconds"
+              << std::endl;
+    std::cout << "Instructions executed: " << executedI << std::endl;
+    std::cout << "MIPS: " << float(executedI) / float(duration.count())
+              << std::endl;
+  }
 } // namespace simlinx
