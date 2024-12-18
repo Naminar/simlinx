@@ -53,3 +53,9 @@ How to compile bin files for simulation:
 riscv64-linux-gnu-gcc -nostdlib -march=rv64i -mabi=lp64 --static -Wl,-emain riscv-examples/src/fib.cc
 riscv64-linux-gnu-objdump -M no-aliases -M numeric -d
 ```
+
+Gprof usage (use `-pg` key in cmake)
+```shell
+gprof ./build/bin/simlinx {workload}
+gprof ./build/bin/simlinx gmon.out > analysis.txt
+```
