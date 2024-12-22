@@ -21,7 +21,6 @@ namespace simlinx {
       }
 
       if (pa.has_value()) {
-        // std::cout << "translated in TLB" << std::endl;
         // return pa.value();
       } else {
         // std::cout << "Starting walker" << std::endl;

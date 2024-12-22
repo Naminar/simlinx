@@ -42,17 +42,6 @@ namespace simlinx {
                 << std::bitset<64>(a +
                                    ((va >> shift) & ((1U << 9) - 1)) * PTESize)
                 << std::endl;
-      // if (i == 0) {
-      //   for ( uint32_t j = 0; j < 256; j++) {
-      //    PTEAddr = a + j * PTESize;
-      //    pte = core.load_physical<uint64_t>(PTEAddr);
-
-      // std::cout << "loaded pte: " << std::hex << ((pte & ~((1U<<10)-1)) >>
-      // 10) << std::dec << " "
-      //           << std::bitset<64>(pte & ~((1U<<10)-1)) << " " <<
-      //           std::bitset<64>(pte) << std::endl;
-      //   }
-      // }
 
       PTEAddr = a + ((va >> shift) & ((1U << 9) - 1)) * PTESize;
       pte = core.load_physical<uint64_t>(PTEAddr);
@@ -122,7 +111,7 @@ namespace simlinx {
     if ((pte & xbit) == xbit)
       mmu.tlbX.insert(va, *pa);
 
-    std::cout << "Translated va:" << std::hex << va << " to pa:" << *pa
+    std::cout << "Walker:: Translated va:" << std::hex << va << " to pa:" << *pa
               << std::endl;
     return PageFault::NoFault;
   }
