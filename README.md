@@ -59,9 +59,18 @@ Gprof usage (use `-pg` key in cmake)
 gprof ./build/bin/simlinx {workload}
 gprof ./build/bin/simlinx gmon.out > analysis.txt
 ```
-Queens workload compilation
+
+## Workloads compilation 
+
+Queens workload
 ```
 riscv64-linux-gnu-gcc -nostdl
 ib -fno-builtin -fno-lto -ffreestanding -march=rv64i -mabi=lp64 --static -Wl,-emain riscv-
 examples/src/queens.c -o queens
+```
+
+MMU integration test
+```
+riscv64-linux-gnu-gcc -nostdlib -fno-builtin -fno-lto -ffreestanding -march=rv64izicsr -mabi=lp64 --static -Wl,-emain riscv-examples/src/mmu.cc  page-table-
+api/sv39/sv39.cc  -I./page-table-api/sv39/ -O0 -o mmu
 ```
