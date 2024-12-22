@@ -35,5 +35,9 @@ namespace simlinx {
     std::cout << "Instructions executed: " << executedI << std::endl;
     std::cout << "MIPS: " << float(executedI) / float(duration.count())
               << std::endl;
+
+    if ((fault != Fault::NoFault || this->fault != Fault::NoFault) &&
+        regs[Core::Register::a0])
+      exit(regs[Core::Register::a0]);
   }
 } // namespace simlinx
