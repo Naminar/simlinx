@@ -84,9 +84,13 @@ extern std::array<const char *, {{ implInstrSet|length + 2 }}> InstrNames;
 
 decoder_block_tmpl = Template(
 """{{' '*tab}}decodedInstr.matchBitsId(decodedBits, InstrId::{{ instr_id }});
-{{' '*tab}}{{ decode | indent(tab)}}
-decodedInstr.exec = {{'execute'+instr_id[0].upper()+instr_id[1:].lower()}};
-{% if isEBB %} decodedInstr.setEBB();{% endif %}
+// assignements
+{{' '*tab}}{{ decode | indent(tab)}} // end assignments
+
+// metainformation
+setExec({{'execute'+instr_id[0].upper()+instr_id[1:].lower()}});
+{% if isEBB %} decodedInstr.setEBB();{% endif %} //end metainformation
+
 """)
 
 bitfields_hh_tmpl = Template("""
