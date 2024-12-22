@@ -13,10 +13,10 @@ namespace simlinx {
     regs[2] = 900_KB;
     regs[0] = 0;
     BasicBlock<> *bb;
-    Fault fault = Fault::NO_FAULT;
+    Fault fault = Fault::NoFault;
 
     auto start = std::chrono::high_resolution_clock::now();
-    while (true && fault == Fault::NO_FAULT && this->fault == Fault::NO_FAULT) {
+    while (true && fault == Fault::NoFault && this->fault == Fault::NoFault) {
       bb = icache.lookup(pc_reg);
       if (!bb)
         bb = icache.createNewBlock(*this);
@@ -25,6 +25,8 @@ namespace simlinx {
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    std::cout << "Faults bb: " << (fault != Fault::NoFault) << " core fault: " << (this->fault != Fault::NoFault) << std::endl;
 
     std::cout << "Hit: " << icache.getHit() << " Miss: " << icache.getMiss()
               << std::endl;

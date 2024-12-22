@@ -32,14 +32,14 @@ namespace simlinx {
     requires(blockSize > 0)
   Fault BasicBlock<blockSize>::execute(Core &core) {
     auto inst = instructions[0];
-    Fault fault = Fault::NO_FAULT;
+    Fault fault = Fault::NoFault;
 
     if (inst.instrId == InstrId::NONE)
-      return Fault::THE_END_OF_TASK;
+      return Fault::TheEndOfTask;
     auto prev_pc = core.pc_reg;
     instructions[0].exec(core, &instructions[0], &instructions[0]);
 
-    if (core.fault != Fault::NO_FAULT)
+    if (core.fault != Fault::NoFault)
       fault = core.fault;
     return fault;
   }

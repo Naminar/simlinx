@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
             Core& core) {
             {{ syscall.do | indent(4) }}
-                return Fault::NO_FAULT;
+                return Fault::NoFault;
             }
             {% endfor %}
 

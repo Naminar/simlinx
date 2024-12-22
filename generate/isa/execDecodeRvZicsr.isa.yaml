@@ -8,7 +8,7 @@
         core.CSRs[csr] = core.regs[rs1];
         (curI + 1)->exec(core, bbsI, curI + 1);
         return;
-        //return Fault::NO_FAULT;    
+        //return Fault::NoFault;    
     }
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = core.regs[rs1];

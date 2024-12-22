@@ -353,6 +353,8 @@
 
 
 - instruction: ecall
+  isEBB: true
+  updateCoreState: true
   decode: |
   execute: |
     core.fault = ::Syscall::syscalls[core.regs[simlinx::Core::Register::a7]](core);
