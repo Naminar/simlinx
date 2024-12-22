@@ -1,4 +1,6 @@
-# simlinx
+<p align="center">
+    <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=0:020024,35:090979,100:00d4ff&text=SIMLINX&fontColor=ffffff&reversal=false&section=header&textBg=false&fontAlignY=36" alt="Description of Image" />
+</p>
 
 ## Manuals
 * [The RISC-V Instruction Set Manual Volume I (Unprivileged Architecture)](https://drive.google.com/file/d/1uviu1nH-tScFfgrovvFCrj7Omv8tFtkp/view)
