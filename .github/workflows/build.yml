@@ -12,8 +12,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}  # Use the ref of the triggering branch
 
-      - name: prepare
+      - name: Run tests
+        run: |
+          echo "Running tests on branch: ${{ github.ref }}"
+
+      - name: Packages prepare
         run: |
           sudo apt-get update &&
           sudo apt-get install g++-14 cmake make ninja-build python3 python3-dev git python3.12-venv wget
+
+      - name: Python prepare
+        run: |
+          python3 -m venv .venv;
+          source .venv/bin/activate;
+          pip install -r requirements.txt;
+          pip install -e .
+      - name: Build simlinx
+        run: |
+          cmake -G Ninja .  -B build  -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 -DCMAKE_BUILD_TYPE=Release;
+          cmake --build build --parallel -j$(nproc)
+      
+          
