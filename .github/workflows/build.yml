@@ -50,7 +50,9 @@ jobs:
           cmake --build build --parallel -j$(nproc)
 
       - name: Download tests
-        run: python3 installTests.py
+        run: |
+          source .venv/bin/activate;
+          python3 installTests.py
 
       - name: Run RISC-V tests
         run: bash run_tests.sh
