@@ -39,7 +39,9 @@ jobs:
 
       - name: Build simlinx
         run: |
-          pip list;
+          source .venv/bin/activate
+          echo "Activated virtual environment"
+          pip list  # Check installed packages
           cmake -G Ninja .  -B build  -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 -DCMAKE_BUILD_TYPE=Release;
           cmake --build build --parallel -j$(nproc)
       
