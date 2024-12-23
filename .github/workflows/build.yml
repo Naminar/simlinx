@@ -1,0 +1,32 @@
+name: Build simulator
+
+on:
+  push:
+    branches:
+       - '*'
+
+jobs:
+  run-binaries:
+    runs-on: ubuntu
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: update
+        run: sudo apt-get update
+
+      - name: install g++-14
+        run: sudo apt-get install g++-14
+      
+      - name: install cmake
+        run: sudo apt-get install cmake
+
+      - name: install make
+        run: sudo apt-get install make
+      
+      - name: install ninja
+        run: sudo apt-get install ninja-build
+      
+      - name: install python3
+        run: sudo apt-get install python3
