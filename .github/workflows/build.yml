@@ -48,5 +48,11 @@ jobs:
           pip list  # Check installed packages
           cmake -G Ninja .  -B build  -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 -DCMAKE_BUILD_TYPE=Release;
           cmake --build build --parallel -j$(nproc)
+
+      - name: Download tests
+        run: python3 installTests.py
+
+      - name: Run RISC-V tests
+        run: bash run_tests.sh
       
           
