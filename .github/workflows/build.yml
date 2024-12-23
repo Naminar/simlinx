@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - '*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-binaries:
@@ -16,9 +19,9 @@ jobs:
           ref: ${{ github.ref }}  # Use the ref of the triggering branch
 
       - name: Dump repo
-        run: 
-           pwd; ls -R
-      
+        run:
+          pwd; ls -R
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -56,5 +59,3 @@ jobs:
 
       - name: Run RISC-V tests
         run: bash run_tests.sh
-      
-          
