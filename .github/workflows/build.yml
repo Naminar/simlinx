@@ -39,6 +39,7 @@ jobs:
 
       - name: Build simlinx
         run: |
+          pip list;
           cmake -G Ninja .  -B build  -DCMAKE_CXX_COMPILER=/usr/bin/g++-14 -DCMAKE_BUILD_TYPE=Release;
           cmake --build build --parallel -j$(nproc)
       
