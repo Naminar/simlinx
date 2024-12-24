@@ -2,6 +2,14 @@
     <img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=0:020024,35:090979,100:00d4ff&text=SIMLINX&fontColor=ffffff&reversal=false&section=header&textBg=false&fontAlignY=36" alt="Description of Image" />
 </p>
 
+<p align="center" style="text-align: center;">
+    <a href="https://github.com/Naminar/simlinx/actions/workflows/build.yml"><img src="https://github.com/Naminar/simlinx/actions/workflows/build.yml/badge.svg" alt="Build simulator" /></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/using-c%2B%2B23-blue" alt="C++23" /></a>
+</p>
+
+
+
 ## Manuals
 * [The RISC-V Instruction Set Manual Volume I (Unprivileged Architecture)](https://drive.google.com/file/d/1uviu1nH-tScFfgrovvFCrj7Omv8tFtkp/view)
 * [The RISC-V Instruction Set Manual: Volume II (Privileged Architecture)](https://drive.google.com/file/d/17GeetSnT5wW3xNuAHI95-SI1gPGd5sJ_/view)
