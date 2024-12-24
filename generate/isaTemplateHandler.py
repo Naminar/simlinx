@@ -40,9 +40,16 @@ class YamlHandler:
 
     def set_decoded_instr(self, implemInstr: dict):
         implemInstr['instruction'] = implemInstr['instruction'][0].upper() + implemInstr['instruction'][1:]
-        # if 'isEBB' not in implemInstr.keys():
-        #     implemInstr['isEBB'] = False
-        implemInstr['isEBB'] = False
+        if 'isEBB' not in implemInstr.keys():
+            implemInstr['isEBB'] = False
+        else:
+            implemInstr['isEBB'] = True
+        
+        if 'updateCoreState' not in implemInstr.keys():
+            implemInstr['updateCoreState'] = False
+        else:
+            implemInstr['updateCoreState'] = True
+
         for sign in ['+=', '-=', '=']:
             for gap in [' ', '']:
                 token = 'pc_reg' + gap + sign

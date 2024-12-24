@@ -17,7 +17,7 @@
     else
       // green
       printf("sys_exit [ \033[32m %ld \033[0m ]\n", core.regs[Core::Register::a0]);
-    return Fault::THE_END_OF_TASK;
+    return Fault::TheEndOfTask;
 
 - name: not_implemented_syscall
   args: []

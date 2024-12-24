@@ -21,7 +21,7 @@ namespace simlinx {
     RAM &mem;
     MMU mmu;
     BasicBlockCache icache;
-    Fault fault = Fault::NO_FAULT;
+    Fault fault = Fault::NoFault;
     uint64_t executedI = 0;
 
   public:

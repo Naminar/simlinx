@@ -1,18 +1,15 @@
 - instruction: csrrw 
   decode: |
-    decodedInstr.rs1 = RS1;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    useRS1;
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     if (core.regs[rd] == 0) {
         core.CSRs[csr] = core.regs[rs1];
         (curI + 1)->exec(core, bbsI, curI + 1);
-        std::cout << "satp now ret " << core.CSRs[csr] << " " << core.regs[rs1] <<  std::endl;
         return;
-        //return Fault::NO_FAULT;    
+        //return Fault::NoFault;    
     }
-    std::cout << "satp now " << core.CSRs[csr]<< std::endl;
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = core.regs[rs1];
     core.regs[rd] = tmp;
@@ -20,11 +17,10 @@
 
 - instruction: csrrs
   decode: |
-    decodedInstr.rs1 = RS1;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    useRS1;
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = tmp | core.regs[rs1];
     core.regs[rd] = tmp;
@@ -32,11 +28,10 @@
 
 - instruction: csrrc
   decode: |
-    decodedInstr.rs1 = RS1;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    useRS1;
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = tmp & ~core.regs[rs1];
     core.regs[rd] = tmp;
@@ -44,11 +39,10 @@
 
 - instruction: csrrwi
   decode: |
-    decodedInstr.imm = ZIMM;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    assign(imm, ZIMM);
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     /*if (isntr.rd != 0)*/
     core.regs[rd] = core.CSRs[csr];
     core.CSRs[csr] = imm;
@@ -56,11 +50,10 @@
 
 - instruction: csrrsi
   decode: |
-    decodedInstr.imm = ZIMM;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    assign(imm, ZIMM);
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = tmp | imm;
     core.regs[rd] = tmp;
@@ -68,11 +61,10 @@
 
 - instruction: csrrci
   decode: |
-    decodedInstr.imm = ZIMM;
-    decodedInstr.rd = RD;
-    decodedInstr.csr = CSR;
+    assign(imm, ZIMM);
+    useRD;
+    useCSR;
   execute: |
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     reg_t tmp = core.CSRs[csr];
     core.CSRs[csr] = tmp & ~imm;
     core.regs[rd] = tmp;
